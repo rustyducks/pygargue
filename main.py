@@ -98,6 +98,10 @@ class App(QWidget):
         self.robot.orientation = theta
         self.repaint()
 
+    def new_trajectory(self, trajectory):
+        self.robot.trajectory = trajectory
+        self.repaint()
+
 
 
 if __name__ == '__main__':

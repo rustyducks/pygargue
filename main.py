@@ -1,6 +1,8 @@
+import argparse
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel
-from PyQt5.QtGui import QIcon, QPixmap, QPen, QColor, QBrush, QPolygonF, QPainter, QImage, QPalette
+from PyQt5.QtGui import QIcon, QPixmap, QPen, QColor, QBrush, QPolygonF, QPainter, QImage, QPalette, QKeyEvent, \
+    QMouseEvent
 from PyQt5.QtCore import QPointF, pyqtSlot, QSize, QRectF
 
 from ivy_pygargue import Ivy
@@ -13,6 +15,7 @@ from q_robot import QRobot
 
 OBSTACLE_COLOR = (66, 134, 244)
 BACKGROUND_COLOR = (25, 25, 25)
+GRAPH_TABLE_RATIO = 0.2  # graph/table ratio for discreted graph generation
 
 
 class App(QWidget):
@@ -101,6 +104,18 @@ class App(QWidget):
     def new_trajectory(self, trajectory):
         self.robot.trajectory = trajectory
         self.repaint()
+
+    def keyPressEvent(self, event:QKeyEvent):
+        img = ObstacleMap(self.obstacles, GRAPH_TABLE_RATIO)
+        print("dumping")
+        img.dump_obstacle_grid_to_file("graph.txt")
+
+    def mousePressEvent(self, event:QMouseEvent):
+        width_factor = self.table_width / 3000
+        height_factor = self.table_height / 2000
+        x_click = event.x() / width_factor
+        y_click = event.y() / height_factor
+        self.ivy.send_go_to(3000 - int(x_click), int(y_click))
 
 
 

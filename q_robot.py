@@ -13,7 +13,7 @@ class QRobot(QWidget):
     def __init__(self, app):
         super().__init__(app)
         self.app = app
-        self.position = (200, 1800)  # type:(int, int)
+        self.position = (1500, 1000)  # type:(int, int)
         self.orientation = 0  # radians type:float
         self.radius = 150
         self.trajectory = []  # type:list(tuple(int))

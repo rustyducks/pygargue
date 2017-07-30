@@ -10,6 +10,7 @@ NEW_POLYGON_OBSTACLE_REGEXP = "New Obstacle id : (.*) type : POLYGON points : (.
 NEW_CIRCLE_OBSTACLE_REGEXP = "New Obstacle id : (.*) type : CIRCLE center : (.*) radius : (.*)"  # eg : New Obstacle id : 6 type : CIRCLE center : 500,800 radius : 150
 ROBOT_POSITION_REGEXP = "Robot position (.*) orientation (.*)"  # eg : Robot position 552,789 orientation 3.14159265
 NEW_TRAJECTORY_REGEXP = "New trajectory (.*)"  # eg : New trajectory 528,450;1200,564;846,1486
+GO_TO_REGEXP = "Go to {},{}"
 
 class Ivy:
     def __init__(self, application, bus=DEFAULT_BUS):
@@ -47,6 +48,9 @@ class Ivy:
             x, y = pt.split(',')
             trajectory.append((int(x),int(y)))
         self.app.new_trajectory(trajectory)
+
+    def send_go_to(self, x, y):
+        IvySendMsg(GO_TO_REGEXP.format(x, y))
 
 
     def stop(self):

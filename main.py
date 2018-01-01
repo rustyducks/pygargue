@@ -12,6 +12,7 @@ from obstacle_map import ObstacleMap
 import timeit
 
 from q_robot import QRobot
+from point import Point
 
 OBSTACLE_COLOR = (66, 134, 244)
 BACKGROUND_COLOR = (25, 25, 25)
@@ -28,6 +29,7 @@ class App(QWidget):
         self.table_width = 1200
         self.table_height = 800
         self.obstacles = []  # type:list[Obstacle]
+        self.highlighted_point = {}  # type: dict[int, Point]
         self.ivy = Ivy(self)
         self.initUI()
  
@@ -58,13 +60,16 @@ class App(QWidget):
         painter.drawLine(0, 0, 0, self.table_height-1)
         painter.drawLine(0, self.table_height-1, self.table_width-1, self.table_height-1)
         painter.drawLine(self.table_width-1, self.table_height-1, self.table_width-1, 0)
-        painter.drawLine(self.table_width-1, 0,0, 0)
+        painter.drawLine(self.table_width-1, 0, 0, 0)
         painter.setPen(QPen(QColor(*OBSTACLE_COLOR)))
         painter.setBrush(QBrush(QColor(*OBSTACLE_COLOR)))
         for obs in self.obstacles:
             draw_function_name, draw_object = obs.to_qobject(0, 0, self.table_width - 1, self.table_height - 1)
             paint_function = getattr(painter, draw_function_name)  # get the method of painter
             paint_function(draw_object)
+        for pt in self.highlighted_point.values():
+            pt.paint(painter, 0, 0, self.table_width - 1, self.table_height - 1)
+
         self.robot.paint(painter, 0, 0, self.table_width - 1, self.table_height - 1)
 
 

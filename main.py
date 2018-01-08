@@ -23,6 +23,8 @@ BACKGROUND_COLOR = (25, 25, 25)
 FEEDFORWARD_ARROW_COLOR = (143, 183, 247)
 GRAPH_TABLE_RATIO = 0.2  # graph/table ratio for discreted graph generation
 
+THRESHOLD_DISTANCE_ANGLE_SELECTION = 20
+
 
 class App(QWidget):
  
@@ -148,18 +150,23 @@ class App(QWidget):
         self.feed_forward_arrow = ((event.x(), event.y()), (0, 0))
 
     def mouseMoveEvent(self, event:QMouseEvent):
-        if self.feed_forward_arrow is not None:
+        if self.feed_forward_arrow is not None and math.hypot(event.x() - self.feed_forward_arrow[0][0],
+                                                              event.y() - self.feed_forward_arrow[0][1]) >= THRESHOLD_DISTANCE_ANGLE_SELECTION:
             self.feed_forward_arrow = (self.feed_forward_arrow[0], (event.x(), event.y()))
             self.repaint()
 
     def mouseReleaseEvent(self, event:QMouseEvent):
-        width_factor = self.table_width / 3000
-        height_factor = self.table_height / 2000
-        x_release = event.x() / width_factor
-        y_release = event.y() / height_factor
-        dy = y_release - self.y_press
-        theta = atan2(dy, self.x_press - x_release)
-        self.ivy.send_go_to(3000 - int(self.x_press), int(self.y_press), theta)
+        if math.hypot(event.x() - self.feed_forward_arrow[0][0], event.y() - self.feed_forward_arrow[0][1]) < THRESHOLD_DISTANCE_ANGLE_SELECTION:
+            self.ivy.send_go_to(self.x_press, self.y_press)
+        else:
+            width_factor = self.table_width / 3000
+            height_factor = self.table_height / 2000
+            x_release = event.x() / width_factor
+            y_release = event.y() / height_factor
+            dx = x_release - self.x_press
+            dy = y_release - self.y_press
+            theta = atan2(dy, dx)
+            self.ivy.send_go_to_orient(3000 - int(self.x_press), int(self.y_press), theta)
         self.x_press = None
         self.y_press = None
         self.feed_forward_arrow = None

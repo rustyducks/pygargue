@@ -13,7 +13,8 @@ UPDATE_ROBOT_POSITION_REGEXP = "Update robot pose (.*)"  # eg : Update robot pos
 NEW_TRAJECTORY_REGEXP = "New trajectory (.*)"  # eg : New trajectory 528,450;1200,564;846,1486
 HIGHLIGHT_POINT_REGEXP = "Highlight point (.*)"  # eg : Highlight point 3;1500;1250
 HIGHLIGHT_ANGLE_REGEXP = "Highlight angle (.*)"  # eg : Highlight angle 5;0.707
-GO_TO_REGEXP = "Go to {},{},{}"
+GO_TO_ORIENT_REGEXP = "Go to orient {},{},{}"
+GO_TO_REGEXP = "Go to linear {},{}"
 
 class Ivy:
     def __init__(self, application, bus=DEFAULT_BUS):
@@ -64,8 +65,11 @@ class Ivy:
         self.app.highlighted_angles[int(ident)] = float(angle)
         self.app.repaint()
 
-    def send_go_to(self, x, y, theta):
-        IvySendMsg(GO_TO_REGEXP.format(x, y, theta))
+    def send_go_to_orient(self, x, y, theta):
+        IvySendMsg(GO_TO_ORIENT_REGEXP.format(x, y, theta))
+
+    def send_go_to(self, x, y):
+        IvySendMsg(GO_TO_REGEXP.format(x, y))
 
 
     def stop(self):

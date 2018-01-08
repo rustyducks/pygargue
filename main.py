@@ -35,6 +35,7 @@ class App(QWidget):
         self.x_press = 0
         self.obstacles = []  # type:list[Obstacle]
         self.highlighted_point = {}  # type: dict[int, Point]
+        self.highlighted_angles = {}  # type: dict[int, float]
         self.ivy = Ivy(self)
         self.initUI()
  
@@ -76,6 +77,7 @@ class App(QWidget):
             pt.paint(painter, 0, 0, self.table_width - 1, self.table_height - 1)
 
         self.robot.paint(painter, 0, 0, self.table_width - 1, self.table_height - 1)
+        self.robot.paint_angles(self.highlighted_angles, painter, 0, 0, self.table_width - 1, self.table_height - 1)
 
 
     @pyqtSlot()

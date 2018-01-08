@@ -12,6 +12,7 @@ NEW_CIRCLE_OBSTACLE_REGEXP = "New Obstacle id : (.*) type : CIRCLE center : (.*)
 UPDATE_ROBOT_POSITION_REGEXP = "Update robot pose (.*)"  # eg : Update robot pose 325;1523;-1.57785
 NEW_TRAJECTORY_REGEXP = "New trajectory (.*)"  # eg : New trajectory 528,450;1200,564;846,1486
 HIGHLIGHT_POINT_REGEXP = "Highlight point (.*)"  # eg : Highlight point 3;1500;1250
+HIGHLIGHT_ANGLE_REGEXP = "Highlight angle (.*)"  # eg : Highlight angle 5;0.707
 GO_TO_REGEXP = "Go to {},{},{}"
 
 class Ivy:
@@ -24,6 +25,7 @@ class Ivy:
         IvyBindMsg(self.on_new_robot_position, UPDATE_ROBOT_POSITION_REGEXP)
         IvyBindMsg(self.on_new_trajectory, NEW_TRAJECTORY_REGEXP)
         IvyBindMsg(self.on_new_highlight_point, HIGHLIGHT_POINT_REGEXP)
+        IvyBindMsg(self.on_new_highlight_angle, HIGHLIGHT_ANGLE_REGEXP)
 
     def on_new_polygon_obstacle(self, agent, *arg):
         polygon = Polygon()
@@ -55,6 +57,11 @@ class Ivy:
     def on_new_highlight_point(self, agent, *arg):
         ident, x, y = arg[0].split(";")
         self.app.highlighted_point[int(ident)] = Point(int(ident), float(x), float(y))
+        self.app.repaint()
+
+    def on_new_highlight_angle(self, agent, *arg):
+        ident, angle = arg[0].split(";")
+        self.app.highlighted_angles[int(ident)] = float(angle)
         self.app.repaint()
 
     def send_go_to(self, x, y, theta):

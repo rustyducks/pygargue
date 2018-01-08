@@ -38,6 +38,19 @@ class QRobot(QWidget):
                          QPointF(width - (self.position[0] + math.cos(self.orientation) * self.radius) * width_factor + x_offset,
                                  (self.position[1] + math.sin(self.orientation) * self.radius) * height_factor + y_offset))
 
+    def paint_angles(self, angles, painter, x_offset, y_offset, width, height):
+        width_factor = width / TABLE_WIDTH
+        height_factor = height / TABLE_HEIGHT
+        for angle in angles.items():
+            color = self.get_qcolor(angle[0])
+            painter.setPen(QPen(color))
+            painter.setBrush(QBrush(color))
+            painter.drawLine(QPointF(width - self.position[0] * width_factor + x_offset,
+                                 self.position[1] * height_factor + y_offset),
+                         QPointF(width - (self.position[0] + math.cos(angle[1]) * self.radius) * width_factor + x_offset,
+                                 (self.position[1] + math.sin(angle[1]) * self.radius) * height_factor + y_offset))
+
+
     def _paint_trajectory(self, painter, x_offset, y_offset, width, height):
         if self.trajectory is None or len(self.trajectory) == 0:
             return
@@ -59,3 +72,8 @@ class QRobot(QWidget):
 
 
         painter.drawLines(q_trajectory)
+
+    def get_qcolor(self, i):
+        d = (0xff, 0xdd, 0xbb, 0x99, 0x77, 0x55)[(i // 6) % 6]
+        r, v, b = ((d, d, 0), (d, 0, d), (0, d, d), (d, 0, 0), (0, d, 0), (0, 0, d))[i % 6]
+        return QColor(r, v, b)

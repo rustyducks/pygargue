@@ -1,5 +1,8 @@
+#!/usr/bin/python3
+
 import argparse
 import sys
+from math import atan2
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel
 from PyQt5.QtGui import QIcon, QPixmap, QPen, QColor, QBrush, QPolygonF, QPainter, QImage, QPalette, QKeyEvent, \
     QMouseEvent
@@ -28,6 +31,8 @@ class App(QWidget):
         self.table_top = 0
         self.table_width = 1200
         self.table_height = 800
+        self.x_press = 0
+        self.x_press = 0
         self.obstacles = []  # type:list[Obstacle]
         self.highlighted_point = {}  # type: dict[int, Point]
         self.ivy = Ivy(self)
@@ -118,9 +123,18 @@ class App(QWidget):
     def mousePressEvent(self, event:QMouseEvent):
         width_factor = self.table_width / 3000
         height_factor = self.table_height / 2000
-        x_click = event.x() / width_factor
-        y_click = event.y() / height_factor
-        self.ivy.send_go_to(3000 - int(x_click), int(y_click))
+        self.x_press = event.x() / width_factor
+        self.y_press = event.y() / height_factor
+
+    
+    def mouseReleaseEvent(self, event:QMouseEvent):
+        width_factor = self.table_width / 3000
+        height_factor = self.table_height / 2000
+        x_release = event.x() / width_factor
+        y_release = event.y() / height_factor
+        dy = y_release - self.y_press
+        theta = atan2(dy, self.x_press - x_release)
+        self.ivy.send_go_to(3000 - int(self.x_press), int(self.y_press), theta)
 
 
 

@@ -12,7 +12,7 @@ NEW_CIRCLE_OBSTACLE_REGEXP = "New Obstacle id : (.*) type : CIRCLE center : (.*)
 UPDATE_ROBOT_POSITION_REGEXP = "Update robot pose (.*)"  # eg : Update robot pose 325;1523;-1.57785
 NEW_TRAJECTORY_REGEXP = "New trajectory (.*)"  # eg : New trajectory 528,450;1200,564;846,1486
 HIGHLIGHT_POINT_REGEXP = "Highlight point (.*)"  # eg : Highlight point 3;1500;1250
-GO_TO_REGEXP = "Go to {},{}"
+GO_TO_REGEXP = "Go to {},{},{}"
 
 class Ivy:
     def __init__(self, application, bus=DEFAULT_BUS):
@@ -57,8 +57,8 @@ class Ivy:
         self.app.highlighted_point[int(ident)] = Point(int(ident), float(x), float(y))
         self.app.repaint()
 
-    def send_go_to(self, x, y):
-        IvySendMsg(GO_TO_REGEXP.format(x, y))
+    def send_go_to(self, x, y, theta):
+        IvySendMsg(GO_TO_REGEXP.format(x, y, theta))
 
 
     def stop(self):

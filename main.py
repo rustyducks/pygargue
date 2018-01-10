@@ -157,7 +157,7 @@ class App(QWidget):
 
     def mouseReleaseEvent(self, event:QMouseEvent):
         if math.hypot(event.x() - self.feed_forward_arrow[0][0], event.y() - self.feed_forward_arrow[0][1]) < THRESHOLD_DISTANCE_ANGLE_SELECTION:
-            self.ivy.send_go_to(self.x_press, self.y_press)
+            self.ivy.send_go_to(3000 - int(self.x_press), int(self.y_press))
         else:
             width_factor = self.table_width / 3000
             height_factor = self.table_height / 2000

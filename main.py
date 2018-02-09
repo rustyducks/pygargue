@@ -12,6 +12,7 @@ from ivy_pygargue import Ivy
 from obstacle import Obstacle
 from obstacle_map import ObstacleMap
 import math
+import signal
 
 import timeit
 
@@ -185,4 +186,5 @@ if __name__ == '__main__':
     #ex.dump_obstacle_grid_to_file("test.txt")
     #stop = timeit.default_timer()
     #print (stop - start)
+    signal.signal(signal.SIGINT, signal.SIG_DFL)
     sys.exit(app.exec_())

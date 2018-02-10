@@ -42,6 +42,7 @@ class App(QWidget):
         self.highlighted_point = {}  # type: dict[int, Point]
         self.highlighted_angles = {}  # type: dict[int, float]
         self.feed_forward_arrow = None  # ((xs, ys), (xe, ye))
+        self.feed_forward_arrow_enabled = False
         self.ivy = Ivy(self)
         self.initUI()
  
@@ -134,7 +135,7 @@ class App(QWidget):
         painter.setBrush(old_brush)
 
     def paint_feedforward(self, painter):
-        if self.feed_forward_arrow is not None:
+        if self.feed_forward_arrow is not None and self.feed_forward_arrow_enabled:
             painter.setPen(QPen(QColor(*FEEDFORWARD_ARROW_COLOR)))
             painter.setBrush(QBrush(QColor(*FEEDFORWARD_ARROW_COLOR)))
             painter.drawLine(QPointF(*self.feed_forward_arrow[0]), QPointF(*self.feed_forward_arrow[1]))
@@ -173,6 +174,7 @@ class App(QWidget):
         if self.feed_forward_arrow is not None and math.hypot(event.x() - self.feed_forward_arrow[0][0],
                                                               event.y() - self.feed_forward_arrow[0][1]) >= THRESHOLD_DISTANCE_ANGLE_SELECTION:
             self.feed_forward_arrow = (self.feed_forward_arrow[0], (event.x(), event.y()))
+            self.feed_forward_arrow_enabled = True
             self.repaint()
 
     def mouseReleaseEvent(self, event:QMouseEvent):
@@ -190,6 +192,7 @@ class App(QWidget):
         self.x_press = None
         self.y_press = None
         self.feed_forward_arrow = None
+        self.feed_forward_arrow_enabled = False
         self.repaint()
 
 

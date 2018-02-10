@@ -6,7 +6,7 @@ from math import atan2
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel
 from PyQt5.QtGui import QIcon, QPixmap, QPen, QColor, QBrush, QPolygonF, QPainter, QImage, QPalette, QKeyEvent, \
     QMouseEvent
-from PyQt5.QtCore import QPointF, pyqtSlot, QSize, QRectF
+from PyQt5.QtCore import QPointF, pyqtSlot, QSize, QRectF, Qt
 
 from ivy_pygargue import Ivy
 from obstacle import Obstacle
@@ -157,9 +157,10 @@ class App(QWidget):
         self.repaint()
 
     def keyPressEvent(self, event:QKeyEvent):
-        img = ObstacleMap(self.obstacles, GRAPH_TABLE_RATIO)
-        print("dumping")
-        img.dump_obstacle_grid_to_file("graph.txt")
+        if event.key() == Qt.Key_D:
+            img = ObstacleMap(self.obstacles, GRAPH_TABLE_RATIO)
+            print("dumping")
+            img.dump_obstacle_grid_to_file("graph.txt")
 
     def mousePressEvent(self, event:QMouseEvent):
         width_factor = self.table_width / 3000

@@ -13,7 +13,7 @@ from obstacle import Obstacle
 from obstacle_map import ObstacleMap
 import math
 import signal
-
+from multiprocessing import Lock
 import timeit
 
 from q_robot import QRobot
@@ -43,8 +43,11 @@ class App(QWidget):
         self.highlighted_angles = {}  # type: dict[int, float]
         self.feed_forward_arrow = None  # ((xs, ys), (xe, ye))
         self.feed_forward_arrow_enabled = False
+        self.repaint_mutex = Lock()
         self.ivy = Ivy(self)
+        self.repaint_mutex.acquire()
         self.initUI()
+        self.repaint_mutex.release()
  
     def initUI(self):
         self.setWindowTitle(self.title)
@@ -151,11 +154,15 @@ class App(QWidget):
     def move_robot(self, x, y, theta):
         self.robot.position = (x, y)
         self.robot.orientation = theta
+        self.repaint_mutex.acquire()
         self.repaint()
+        self.repaint_mutex.release()
 
     def new_trajectory(self, trajectory):
         self.robot.trajectory = trajectory
+        self.repaint_mutex.acquire()
         self.repaint()
+        self.repaint_mutex.release()
 
     def keyPressEvent(self, event:QKeyEvent):
         if event.key() == Qt.Key_D:
@@ -175,7 +182,9 @@ class App(QWidget):
                                                               event.y() - self.feed_forward_arrow[0][1]) >= THRESHOLD_DISTANCE_ANGLE_SELECTION:
             self.feed_forward_arrow = (self.feed_forward_arrow[0], (event.x(), event.y()))
             self.feed_forward_arrow_enabled = True
+            self.repaint_mutex.acquire()
             self.repaint()
+            self.repaint_mutex.release()
 
     def mouseReleaseEvent(self, event:QMouseEvent):
         if math.hypot(event.x() - self.feed_forward_arrow[0][0], event.y() - self.feed_forward_arrow[0][1]) < THRESHOLD_DISTANCE_ANGLE_SELECTION:
@@ -193,7 +202,9 @@ class App(QWidget):
         self.y_press = None
         self.feed_forward_arrow = None
         self.feed_forward_arrow_enabled = False
+        self.repaint_mutex.acquire()
         self.repaint()
+        self.repaint_mutex.release()
 
 
 

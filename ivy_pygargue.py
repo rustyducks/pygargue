@@ -5,7 +5,7 @@ from obstacle import Polygon, Circle
 from point import Point
 
 IVY_APP_NAME = "Pygargue"
-DEFAULT_BUS = '192.168.255.255:2010'
+DEFAULT_BUS = '192.168.1.165:2010'
 
 NEW_POLYGON_OBSTACLE_REGEXP = "New Obstacle id : (.*) type : POLYGON points : (.*)"  # eg : New Obstacle id : 3 type : POLYGON points : 1500,350;1500,650;1000,650;1000,350
 NEW_CIRCLE_OBSTACLE_REGEXP = "New Obstacle id : (.*) type : CIRCLE center : (.*) radius : (.*)"  # eg : New Obstacle id : 6 type : CIRCLE center : 500,800 radius : 150
@@ -34,7 +34,9 @@ class Ivy:
             x, y = pt.split(',')
             polygon.points.append((float(x), float(y)))
         self.app.obstacles.append(polygon)
+        self.app.repaint_mutex.acquire()
         self.app.repaint()
+        self.app.repaint_mutex.release()
 
     def on_new_circle_obstacle(self, agent, *arg):
         circle = Circle()
@@ -42,7 +44,9 @@ class Ivy:
         circle.center = (float(xc), float(yc))
         circle.radius = float(arg[2])
         self.app.obstacles.append(circle)
+        self.app.repaint_mutex.acquire()
         self.app.repaint()
+        self.app.repaint_mutex.release()
 
     def on_new_robot_position(self, agent, *arg):
         x, y, theta = arg[0].split(';')
@@ -58,19 +62,22 @@ class Ivy:
     def on_new_highlight_point(self, agent, *arg):
         ident, x, y = arg[0].split(";")
         self.app.highlighted_point[int(ident)] = Point(int(ident), float(x), float(y))
+        self.app.repaint_mutex.acquire()
         self.app.repaint()
+        self.app.repaint_mutex.release()
 
     def on_new_highlight_angle(self, agent, *arg):
         ident, angle = arg[0].split(";")
         self.app.highlighted_angles[int(ident)] = float(angle)
+        self.app.repaint_mutex.acquire()
         self.app.repaint()
+        self.app.repaint_mutex.release()
 
     def send_go_to_orient(self, x, y, theta):
         IvySendMsg(GO_TO_ORIENT_REGEXP.format(x, y, theta))
 
     def send_go_to(self, x, y):
         IvySendMsg(GO_TO_REGEXP.format(x, y))
-
 
     def stop(self):
         IvyStop()

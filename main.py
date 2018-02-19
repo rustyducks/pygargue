@@ -165,10 +165,29 @@ class App(QWidget):
         self.repaint_mutex.release()
 
     def keyPressEvent(self, event:QKeyEvent):
-        if event.key() == Qt.Key_D:
+        key = event.key()
+        if key == Qt.Key_D:
             img = ObstacleMap(self.obstacles, GRAPH_TABLE_RATIO)
             print("dumping")
             img.dump_obstacle_grid_to_file("graph.txt")
+        elif key == Qt.Key_Ampersand:
+            self.ivy.send_action(1)
+        elif key == Qt.Key_Eacute:
+            self.ivy.send_action(2)
+        elif key == Qt.Key_QuoteDbl:
+            self.ivy.send_action(3)
+        elif key == Qt.Key_Apostrophe:
+            self.ivy.send_action(4)
+        elif key == Qt.Key_BraceLeft:
+            self.ivy.send_action(5)
+        elif key == Qt.Key_Minus:
+            self.ivy.send_action(6)
+        elif key == Qt.Key_Egrave:
+            self.ivy.send_action(7)
+        elif key == Qt.Key_Underscore:
+            self.ivy.send_action(8)
+        elif key == Qt.Key_Ccedilla:
+            self.ivy.send_action(9)
 
     def mousePressEvent(self, event:QMouseEvent):
         width_factor = self.table_width / 3000

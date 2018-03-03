@@ -178,7 +178,7 @@ class App(QWidget):
             self.ivy.send_action(3)
         elif key == Qt.Key_Apostrophe:
             self.ivy.send_action(4)
-        elif key == Qt.Key_BraceLeft:
+        elif key == Qt.Key_ParenLeft:
             self.ivy.send_action(5)
         elif key == Qt.Key_Minus:
             self.ivy.send_action(6)

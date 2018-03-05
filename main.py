@@ -43,6 +43,7 @@ class App(QWidget):
         self.highlighted_angles = {}  # type: dict[int, float]
         self.feed_forward_arrow = None  # ((xs, ys), (xe, ye))
         self.feed_forward_arrow_enabled = False
+        self.robot_speed_command = [0, 0, 0]
         self.repaint_mutex = Lock()
         self.ivy = Ivy(self)
         self.repaint_mutex.acquire()
@@ -165,8 +166,10 @@ class App(QWidget):
         self.repaint_mutex.release()
 
     def keyPressEvent(self, event:QKeyEvent):
+        if event.isAutoRepeat():
+            return
         key = event.key()
-        if key == Qt.Key_D:
+        if key == Qt.Key_G:
             img = ObstacleMap(self.obstacles, GRAPH_TABLE_RATIO)
             print("dumping")
             img.dump_obstacle_grid_to_file("graph.txt")
@@ -188,6 +191,47 @@ class App(QWidget):
             self.ivy.send_action(8)
         elif key == Qt.Key_Ccedilla:
             self.ivy.send_action(9)
+        elif key == Qt.Key_Z:
+            self.robot_speed_command[1] = -1
+            self.ivy.send_speed_direction(self.robot_speed_command)
+        elif key == Qt.Key_Q:
+            self.robot_speed_command[0] = 1
+            self.ivy.send_speed_direction(self.robot_speed_command)
+        elif key == Qt.Key_S:
+            self.robot_speed_command[1] = 1
+            self.ivy.send_speed_direction(self.robot_speed_command)
+        elif key == Qt.Key_D:
+            self.robot_speed_command[0] = -1
+            self.ivy.send_speed_direction(self.robot_speed_command)
+        elif key == Qt.Key_A:
+            self.robot_speed_command[2] = 1
+            self.ivy.send_speed_direction(self.robot_speed_command)
+        elif key == Qt.Key_E:
+            self.robot_speed_command[2] = -1
+            self.ivy.send_speed_direction(self.robot_speed_command)
+
+    def keyReleaseEvent(self, event:QKeyEvent):
+        if event.isAutoRepeat():
+            return
+        key = event.key()
+        if key == Qt.Key_Z:
+            self.robot_speed_command[1] = 0
+            self.ivy.send_speed_direction(self.robot_speed_command)
+        elif key == Qt.Key_Q:
+            self.robot_speed_command[0] = 0
+            self.ivy.send_speed_direction(self.robot_speed_command)
+        elif key == Qt.Key_S:
+            self.robot_speed_command[1] = 0
+            self.ivy.send_speed_direction(self.robot_speed_command)
+        elif key == Qt.Key_D:
+            self.robot_speed_command[0] = 0
+            self.ivy.send_speed_direction(self.robot_speed_command)
+        elif key == Qt.Key_A:
+            self.robot_speed_command[2] = 0
+            self.ivy.send_speed_direction(self.robot_speed_command)
+        elif key == Qt.Key_E:
+            self.robot_speed_command[2] = 0
+            self.ivy.send_speed_direction(self.robot_speed_command)
 
     def mousePressEvent(self, event:QMouseEvent):
         width_factor = self.table_width / 3000

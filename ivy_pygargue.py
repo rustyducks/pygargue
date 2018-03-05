@@ -16,6 +16,7 @@ HIGHLIGHT_ANGLE_REGEXP = "Highlight angle (.*)"  # eg : Highlight angle 5;0.707
 GO_TO_ORIENT_REGEXP = "Go to orient {},{},{}"
 GO_TO_REGEXP = "Go to linear {},{}"
 CUSTOM_ACTION_REGEXP = "Custom action {}"
+SPEED_DIRECTION_REGEXP = "Direction {},{},{}"  # eg : Direction 1,1,1  or 1,0,-1 (vertical, horiztonal, orientation)
 
 class Ivy:
     def __init__(self, application, bus=DEFAULT_BUS):
@@ -82,6 +83,9 @@ class Ivy:
 
     def send_action(self, i):
         IvySendMsg(CUSTOM_ACTION_REGEXP.format(i))
+
+    def send_speed_direction(self, direction):
+        IvySendMsg(SPEED_DIRECTION_REGEXP.format(direction[0], direction[1], direction[2]))
 
     def stop(self):
         IvyStop()

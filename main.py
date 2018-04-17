@@ -191,6 +191,12 @@ class App(QWidget):
             self.ivy.send_action(8)
         elif key == Qt.Key_Ccedilla:
             self.ivy.send_action(9)
+        elif key == Qt.Key_Agrave:
+            self.ivy.send_action(10)
+        elif key == Qt.Key_ParenRight:
+            self.ivy.send_action(11)
+        elif key == Qt.Key_Equal:
+            self.ivy.send_action(12)
         elif key == Qt.Key_Z:
             self.robot_speed_command[1] = -1
             self.ivy.send_speed_direction(self.robot_speed_command)

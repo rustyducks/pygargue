@@ -5,7 +5,7 @@ from obstacle import Polygon, Circle
 from point import Point
 
 IVY_APP_NAME = "Pygargue"
-DEFAULT_BUS = '192.168.1.165:2010'
+DEFAULT_BUS = '192.168.1.255:2010'
 
 NEW_POLYGON_OBSTACLE_REGEXP = "New Obstacle id : (.*) type : POLYGON points : (.*)"  # eg : New Obstacle id : 3 type : POLYGON points : 1500,350;1500,650;1000,650;1000,350
 NEW_CIRCLE_OBSTACLE_REGEXP = "New Obstacle id : (.*) type : CIRCLE center : (.*) radius : (.*)"  # eg : New Obstacle id : 6 type : CIRCLE center : 500,800 radius : 150

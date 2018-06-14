@@ -78,10 +78,16 @@ class App(QWidget):
         painter.drawLine(0, self.table_height-1, self.table_width-1, self.table_height-1)
         painter.drawLine(self.table_width-1, self.table_height-1, self.table_width-1, 0)
         painter.drawLine(self.table_width-1, 0, 0, 0)
-        painter.setPen(QPen(QColor(*OBSTACLE_COLOR)))
-        painter.setBrush(QBrush(QColor(*OBSTACLE_COLOR)))
         for obs in self.obstacles:
+            painter.setPen(QPen(QColor(*OBSTACLE_COLOR)))
+            painter.setBrush(QBrush(QColor(*OBSTACLE_COLOR)))
             draw_function_name, draw_object = obs.to_qobject(0, 0, self.table_width - 1, self.table_height - 1)
+            paint_function = getattr(painter, draw_function_name)  # get the method of painter
+            paint_function(draw_object)
+            painter.setPen(QPen(QColor(*OBSTACLE_COLOR, 150)))
+            painter.setBrush(QBrush(QColor(*OBSTACLE_COLOR, 150)))
+            draw_function_name, draw_object = obs.to_qobject(0, 0, self.table_width - 1, self.table_height - 1,
+                                                             inflate_radius=self.robot.radius)
             paint_function = getattr(painter, draw_function_name)  # get the method of painter
             paint_function(draw_object)
         for pt in self.highlighted_point.values():
@@ -263,7 +269,7 @@ class App(QWidget):
             return
         key = event.key()
         if key == Qt.Key_G:
-            img = ObstacleMap(self.obstacles, GRAPH_TABLE_RATIO)
+            img = ObstacleMap(self.obstacles, GRAPH_TABLE_RATIO, self.robot.radius)
             print("dumping")
             img.dump_obstacle_grid_to_file("graph.txt")
         elif key == Qt.Key_Ampersand:

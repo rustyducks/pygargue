@@ -296,22 +296,22 @@ class App(QWidget):
             self.ivy.send_action(11)
         elif key == Qt.Key_Equal:
             self.ivy.send_action(12)
+        #elif key == Qt.Key_Z:
+        #    self.robot_speed_command[1] = -1
+        #    self.ivy.send_speed_direction(self.robot_speed_command)
         elif key == Qt.Key_Z:
-            self.robot_speed_command[1] = -1
-            self.ivy.send_speed_direction(self.robot_speed_command)
-        elif key == Qt.Key_Q:
             self.robot_speed_command[0] = 1
             self.ivy.send_speed_direction(self.robot_speed_command)
+        #elif key == Qt.Key_S:
+        #    self.robot_speed_command[1] = 1
+        #    self.ivy.send_speed_direction(self.robot_speed_command)
         elif key == Qt.Key_S:
-            self.robot_speed_command[1] = 1
-            self.ivy.send_speed_direction(self.robot_speed_command)
-        elif key == Qt.Key_D:
             self.robot_speed_command[0] = -1
             self.ivy.send_speed_direction(self.robot_speed_command)
-        elif key == Qt.Key_A:
+        elif key == Qt.Key_Q:
             self.robot_speed_command[2] = 1
             self.ivy.send_speed_direction(self.robot_speed_command)
-        elif key == Qt.Key_E:
+        elif key == Qt.Key_D:
             self.robot_speed_command[2] = -1
             self.ivy.send_speed_direction(self.robot_speed_command)
 
@@ -319,22 +319,22 @@ class App(QWidget):
         if event.isAutoRepeat():
             return
         key = event.key()
+        #if key == Qt.Key_Z:
+        #    self.robot_speed_command[1] = 0
+        #    self.ivy.send_speed_direction(self.robot_speed_command)
         if key == Qt.Key_Z:
-            self.robot_speed_command[1] = 0
+            self.robot_speed_command[0] = 0
+            self.ivy.send_speed_direction(self.robot_speed_command)
+        #elif key == Qt.Key_S:
+        #    self.robot_speed_command[1] = 0
+        #    self.ivy.send_speed_direction(self.robot_speed_command)
+        elif key == Qt.Key_S:
+            self.robot_speed_command[0] = 0
             self.ivy.send_speed_direction(self.robot_speed_command)
         elif key == Qt.Key_Q:
-            self.robot_speed_command[0] = 0
-            self.ivy.send_speed_direction(self.robot_speed_command)
-        elif key == Qt.Key_S:
-            self.robot_speed_command[1] = 0
-            self.ivy.send_speed_direction(self.robot_speed_command)
-        elif key == Qt.Key_D:
-            self.robot_speed_command[0] = 0
-            self.ivy.send_speed_direction(self.robot_speed_command)
-        elif key == Qt.Key_A:
             self.robot_speed_command[2] = 0
             self.ivy.send_speed_direction(self.robot_speed_command)
-        elif key == Qt.Key_E:
+        elif key == Qt.Key_D:
             self.robot_speed_command[2] = 0
             self.ivy.send_speed_direction(self.robot_speed_command)
 

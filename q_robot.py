@@ -26,17 +26,17 @@ class QRobot(QWidget):
         height_factor = height / TABLE_HEIGHT
         rect_width = self.radius * 2 * width_factor
         rect_height = self.radius * 2 * height_factor
-        top_left_x = width - (self.position[0] - self.radius) * width_factor + x_offset - rect_width
-        top_left_y = (self.position[1] - self.radius) * height_factor + y_offset
+        top_left_x = (self.position[0] - self.radius) * width_factor + x_offset
+        top_left_y = height - (self.position[1] - self.radius) * height_factor + y_offset - rect_height
         painter.setPen(QPen(QColor(*ROBOT_COLOR)))
         painter.setBrush(QBrush(QColor(*ROBOT_COLOR)))
         painter.drawEllipse(QRectF(top_left_x, top_left_y, rect_width, rect_height))
         painter.setPen(QPen(QColor(*ROBOT_ORIENTATION_COLOR)))
         painter.setBrush(QBrush(QColor(*ROBOT_ORIENTATION_COLOR)))
-        painter.drawLine(QPointF(width - self.position[0] * width_factor + x_offset,
-                                 self.position[1] * height_factor + y_offset),
-                         QPointF(width - (self.position[0] + math.cos(self.orientation) * self.radius) * width_factor + x_offset,
-                                 (self.position[1] + math.sin(self.orientation) * self.radius) * height_factor + y_offset))
+        painter.drawLine(QPointF(self.position[0] * width_factor + x_offset,
+                                 height - self.position[1] * height_factor + y_offset),
+                         QPointF((self.position[0] + math.cos(self.orientation) * self.radius) * width_factor + x_offset,
+                                 height - (self.position[1] + math.sin(self.orientation) * self.radius) * height_factor + y_offset))
 
     def paint_angles(self, angles, painter, x_offset, y_offset, width, height):
         width_factor = width / TABLE_WIDTH
@@ -45,10 +45,10 @@ class QRobot(QWidget):
             color = self.get_qcolor(angle[0])
             painter.setPen(QPen(color))
             painter.setBrush(QBrush(color))
-            painter.drawLine(QPointF(width - self.position[0] * width_factor + x_offset,
-                                 self.position[1] * height_factor + y_offset),
-                         QPointF(width - (self.position[0] + math.cos(angle[1]) * self.radius) * width_factor + x_offset,
-                                 (self.position[1] + math.sin(angle[1]) * self.radius) * height_factor + y_offset))
+            painter.drawLine(QPointF(self.position[0] * width_factor + x_offset,
+                                 height - self.position[1] * height_factor + y_offset),
+                         QPointF((self.position[0] + math.cos(angle[1]) * self.radius) * width_factor + x_offset,
+                                 height - (self.position[1] + math.sin(angle[1]) * self.radius) * height_factor + y_offset))
 
 
     def _paint_trajectory(self, painter, x_offset, y_offset, width, height):
@@ -58,16 +58,16 @@ class QRobot(QWidget):
         height_factor = height / TABLE_HEIGHT
         painter.setPen(QPen(QColor(*ROBOT_TRAJECTORY_COLOR)))
         painter.setBrush(QBrush(QColor(*ROBOT_TRAJECTORY_COLOR)))
-        q_trajectory = [QLineF(width - self.position[0] * width_factor + x_offset,
-                                 self.position[1] * height_factor + y_offset,
-                               width - self.trajectory[0][0] * width_factor + x_offset,
-                               self.trajectory[0][1] * height_factor + y_offset)]
+        q_trajectory = [QLineF(self.position[0] * width_factor + x_offset,
+                                 height - self.position[1] * height_factor + y_offset,
+                               self.trajectory[0][0] * width_factor + x_offset,
+                               height - self.trajectory[0][1] * height_factor + y_offset)]
 
         for i in range(1, len(self.trajectory)):
-            x1 = width - self.trajectory[i - 1][0] * width_factor + x_offset
-            y1 = self.trajectory[i-1][1] * height_factor + y_offset
-            x2 = width - self.trajectory[i][0] * width_factor + x_offset
-            y2 = self.trajectory[i][1] * height_factor + y_offset
+            x1 = self.trajectory[i - 1][0] * width_factor + x_offset
+            y1 = height - self.trajectory[i-1][1] * height_factor + y_offset
+            x2 = self.trajectory[i][0] * width_factor + x_offset
+            y2 = height - self.trajectory[i][1] * height_factor + y_offset
             q_trajectory.append(QLineF(x1, y1, x2, y2))
 
 

@@ -56,7 +56,7 @@ class ObstacleMap(QImage):
         for i in range(self.table_height):
             for j in range(self.table_width):
                 if QColor(self.pixel(j, i)) == QColor(COLOR_OBSTACLE):
-                    array[self.table_width - 1 -j,i] = 1
+                    array[j, self.table_height - 1 - i] = 1
         stop = timeit.default_timer()
         print(stop - start)
         return array

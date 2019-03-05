@@ -21,8 +21,8 @@ class Point:
         height_factor = height / TABLE_HEIGHT
         painter.setBrush(QBrush(self.get_qcolor()))
         painter.setPen(QPen(self.get_qcolor()))
-        painter.drawLine(QPointF(width - self.x * width_factor + x_offset - 10, self.y * height_factor + y_offset),
-                         QPointF(width - self.x * width_factor + x_offset + 10, self.y * height_factor + y_offset))
-        painter.drawLine(QPointF(width - self.x * width_factor + x_offset, self.y * height_factor + y_offset - 10),
-                         QPointF(width - self.x * width_factor + x_offset, self.y * height_factor + y_offset + 10))
+        painter.drawLine(QPointF(self.x * width_factor + x_offset - 10, height - self.y * height_factor + y_offset),
+                         QPointF(self.x * width_factor + x_offset + 10, height - self.y * height_factor + y_offset))
+        painter.drawLine(QPointF(self.x * width_factor + x_offset, height - self.y * height_factor + y_offset - 10),
+                         QPointF(self.x * width_factor + x_offset, height - self.y * height_factor + y_offset + 10))
 

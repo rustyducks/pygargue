@@ -107,132 +107,54 @@ class App(QWidget):
         old_pen = painter.pen()
         width_factor = width / 3000
         height_factor = height / 2000
-        start_green_zone = QPolygonF()
-        start_green_zone.append(QPointF(width - (0 * width_factor + x_offset), 2000 * height_factor + y_offset))
-        start_green_zone.append(QPointF(width - (0 * width_factor + x_offset), 1350 * height_factor + y_offset))
-        start_green_zone.append(QPointF(width - (400 * width_factor + x_offset), 1350 * height_factor + y_offset))
-        start_green_zone.append(QPointF(width - (400 * width_factor + x_offset), 2000 * height_factor + y_offset))
-        painter.setPen(QPen(QColor(97, 153, 59)))
-        painter.setBrush(QBrush(QColor(97, 153, 59)))
-        painter.drawPolygon(start_green_zone)
-        start_orange_zone = QPolygonF()
-        start_orange_zone.append(QPointF(width - (2600 * width_factor + x_offset), 2000 * height_factor + y_offset))
-        start_orange_zone.append(QPointF(width - (3000 * width_factor + x_offset), 2000 * height_factor + y_offset))
-        start_orange_zone.append(QPointF(width - (3000 * width_factor + x_offset), 1350 * height_factor + y_offset))
-        start_orange_zone.append(QPointF(width - (2600 * width_factor + x_offset), 1350 * height_factor + y_offset))
-        painter.setPen(QPen(QColor(208, 93, 40)))
-        painter.setBrush(QBrush(QColor(208, 93, 40)))
-        painter.drawPolygon(start_orange_zone)
-
-        construction_zone_green = QPolygonF()
-        construction_zone_green.append(QPointF(width - (400 * width_factor + x_offset), 1820 * height_factor + y_offset))
-        construction_zone_green.append(QPointF(width - (400 * width_factor + x_offset), 2000 * height_factor + y_offset))
-        construction_zone_green.append(QPointF(width - (960 * width_factor + x_offset), 2000 * height_factor + y_offset))
-        construction_zone_green.append(QPointF(width - (960 * width_factor + x_offset), 1820 * height_factor + y_offset))
-        painter.setPen(QPen(QColor(97, 153, 59)))
-        painter.setBrush(QBrush(QColor(0, 0, 0, 0)))
-        painter.drawPolygon(construction_zone_green)
-        construction_zone_orange = QPolygonF()
-        construction_zone_orange.append(QPointF(width - (2040 * width_factor + x_offset), 1820 * height_factor + y_offset))
-        construction_zone_orange.append(QPointF(width - (2040 * width_factor + x_offset), 2000 * height_factor + y_offset))
-        construction_zone_orange.append(QPointF(width - (2600 * width_factor + x_offset), 2000 * height_factor + y_offset))
-        construction_zone_orange.append(QPointF(width - (2600 * width_factor + x_offset), 1820 * height_factor + y_offset))
-        painter.setPen(QPen(QColor(208, 93, 40)))
-        painter.setBrush(QBrush(QColor(0, 0, 0, 0)))
-        painter.drawPolygon(construction_zone_orange)
-
-        white_line = QPolygonF()
-        white_line.append(QPointF(width - (1120 * width_factor + x_offset),
-                                  2000 * height_factor + y_offset))
-        white_line.append(QPointF(width - (1140 * width_factor + x_offset),
-                                  2000 * height_factor + y_offset))
-        white_line.append(QPointF(width - (1140 * width_factor + x_offset),
-                                  1660 * height_factor + y_offset))
-        white_line.append(QPointF(width - (1490 * width_factor + x_offset),
-                                  1660 * height_factor + y_offset))
-        white_line.append(QPointF(width - (1490 * width_factor + x_offset),
-                                  1700 * height_factor + y_offset))
-        white_line.append(QPointF(width - (1510 * width_factor + x_offset),
-                                  1700 * height_factor + y_offset))
-        white_line.append(QPointF(width - (1510 * width_factor + x_offset),
-                                  1660 * height_factor + y_offset))
-        white_line.append(QPointF(width - (1860 * width_factor + x_offset),
-                                  1660 * height_factor + y_offset))
-        white_line.append(QPointF(width - (1860 * width_factor + x_offset),
-                                  2000 * height_factor + y_offset))
-        white_line.append(QPointF(width - (1880 * width_factor + x_offset),
-                                  2000 * height_factor + y_offset))
-        white_line.append(QPointF(width - (1880 * width_factor + x_offset),
-                                  1660 * height_factor + y_offset))
-        white_line.append(QPointF(width - (3000 * width_factor + x_offset),
-                                  1660 * height_factor + y_offset))
-        white_line.append(QPointF(width - (3000 * width_factor + x_offset),
-                                  1640 * height_factor + y_offset))
-        white_line.append(QPointF(width - (2400 * width_factor + x_offset),
-                                  1640 * height_factor + y_offset))
-        white_line.append(QPointF(width - (2400 * width_factor + x_offset),
-                                  1170 * height_factor + y_offset))
-        white_line.append(QPointF(width - (2700 * width_factor + x_offset),
-                                  1170 * height_factor + y_offset))
-        white_line.append(QPointF(width - (2700 * width_factor + x_offset),
-                                  1150 * height_factor + y_offset))
-        white_line.append(QPointF(width - (2400 * width_factor + x_offset),
-                                  1150 * height_factor + y_offset))
-        white_line.append(QPointF(width - (2400 * width_factor + x_offset),
-                                  320 * height_factor + y_offset))
-        white_line.append(QPointF(width - (2380 * width_factor + x_offset),
-                                  320 * height_factor + y_offset))
-        white_line.append(QPointF(width - (2380 * width_factor + x_offset),
-                                  1150 * height_factor + y_offset))
-        white_line.append(QPointF(width - (2150 * width_factor + x_offset),
-                                  1150 * height_factor + y_offset))
-        white_line.append(QPointF(width - (2150 * width_factor + x_offset),
-                                  1170 * height_factor + y_offset))
-        white_line.append(QPointF(width - (2380 * width_factor + x_offset),
-                                  1170 * height_factor + y_offset))
-        white_line.append(QPointF(width - (2380 * width_factor + x_offset),
-                                  1640 * height_factor + y_offset))
-        white_line.append(QPointF(width - (1510 * width_factor + x_offset),
-                                  1640 * height_factor + y_offset))
-        white_line.append(QPointF(width - (1510 * width_factor + x_offset),
-                                  1600 * height_factor + y_offset))
-        white_line.append(QPointF(width - (1490 * width_factor + x_offset),
-                                  1600 * height_factor + y_offset))
-        white_line.append(QPointF(width - (1490 * width_factor + x_offset),
-                                  1640 * height_factor + y_offset))
-        white_line.append(QPointF(width - (620 * width_factor + x_offset),
-                                  1640 * height_factor + y_offset))
-        white_line.append(QPointF(width - (620 * width_factor + x_offset),
-                                  1170 * height_factor + y_offset))
-        white_line.append(QPointF(width - (850 * width_factor + x_offset),
-                                  1170 * height_factor + y_offset))
-        white_line.append(QPointF(width - (850 * width_factor + x_offset),
-                                  1150 * height_factor + y_offset))
-        white_line.append(QPointF(width - (620 * width_factor + x_offset),
-                                  1150 * height_factor + y_offset))
-        white_line.append(QPointF(width - (620 * width_factor + x_offset),
-                                  320 * height_factor + y_offset))
-        white_line.append(QPointF(width - (600 * width_factor + x_offset),
-                                  320 * height_factor + y_offset))
-        white_line.append(QPointF(width - (600 * width_factor + x_offset),
-                                  1150 * height_factor + y_offset))
-        white_line.append(QPointF(width - (300 * width_factor + x_offset),
-                                  1150 * height_factor + y_offset))
-        white_line.append(QPointF(width - (300 * width_factor + x_offset),
-                                  1170 * height_factor + y_offset))
-        white_line.append(QPointF(width - (600 * width_factor + x_offset),
-                                  1170 * height_factor + y_offset))
-        white_line.append(QPointF(width - (600 * width_factor + x_offset),
-                                  1640 * height_factor + y_offset))
-        white_line.append(QPointF(width - (0 * width_factor + x_offset),
-                                  1640 * height_factor + y_offset))
-        white_line.append(QPointF(width - (0 * width_factor + x_offset),
-                                  1660 * height_factor + y_offset))
-        white_line.append(QPointF(width - (1120 * width_factor + x_offset),
-                                  1660 * height_factor + y_offset))
-        painter.setPen(QPen(QColor(255, 255, 255)))
-        painter.setBrush(QBrush(QColor(255, 255, 255, 255)))
-        painter.drawPolygon(white_line)
+        left_red_zone = QPolygonF()
+        left_red_zone.append(QPointF(width - (0 * width_factor + x_offset), 1400 * height_factor + y_offset))
+        left_red_zone.append(QPointF(width - (0 * width_factor + x_offset), 1700 * height_factor + y_offset))
+        left_red_zone.append(QPointF(width - (450 * width_factor + x_offset), 1700 * height_factor + y_offset))
+        left_red_zone.append(QPointF(width - (450 * width_factor + x_offset), 1400 * height_factor + y_offset))
+        painter.setPen(QPen(QColor(217, 25, 32)))
+        painter.setBrush(QBrush(QColor(217, 25, 32)))
+        painter.drawPolygon(left_red_zone)
+        left_green_zone = QPolygonF()
+        left_green_zone.append(QPointF(width - (0 * width_factor + x_offset), 1100 * height_factor + y_offset))
+        left_green_zone.append(QPointF(width - (0 * width_factor + x_offset), 1400 * height_factor + y_offset))
+        left_green_zone.append(QPointF(width - (450 * width_factor + x_offset), 1400 * height_factor + y_offset))
+        left_green_zone.append(QPointF(width - (450 * width_factor + x_offset), 1100 * height_factor + y_offset))
+        painter.setPen(QPen(QColor(76, 190, 75)))
+        painter.setBrush(QBrush(QColor(76, 190, 75)))
+        painter.drawPolygon(left_green_zone)
+        left_blue_zone = QPolygonF()
+        left_blue_zone.append(QPointF(width - (0 * width_factor + x_offset), 800 * height_factor + y_offset))
+        left_blue_zone.append(QPointF(width - (0 * width_factor + x_offset), 1100 * height_factor + y_offset))
+        left_blue_zone.append(QPointF(width - (450 * width_factor + x_offset), 1100 * height_factor + y_offset))
+        left_blue_zone.append(QPointF(width - (450 * width_factor + x_offset), 800 * height_factor + y_offset))
+        painter.setPen(QPen(QColor(41, 126, 203)))
+        painter.setBrush(QBrush(QColor(41, 126, 203)))
+        painter.drawPolygon(left_blue_zone)
+        right_red_zone = QPolygonF()
+        right_red_zone.append(QPointF(width - (2550 * width_factor + x_offset), 1400 * height_factor + y_offset))
+        right_red_zone.append(QPointF(width - (2550 * width_factor + x_offset), 1700 * height_factor + y_offset))
+        right_red_zone.append(QPointF(width - (3000 * width_factor + x_offset), 1700 * height_factor + y_offset))
+        right_red_zone.append(QPointF(width - (3000 * width_factor + x_offset), 1400 * height_factor + y_offset))
+        painter.setPen(QPen(QColor(217, 25, 32)))
+        painter.setBrush(QBrush(QColor(217, 25, 32)))
+        painter.drawPolygon(right_red_zone)
+        right_green_zone = QPolygonF()
+        right_green_zone.append(QPointF(width - (2550 * width_factor + x_offset), 1100 * height_factor + y_offset))
+        right_green_zone.append(QPointF(width - (2550 * width_factor + x_offset), 1400 * height_factor + y_offset))
+        right_green_zone.append(QPointF(width - (3000 * width_factor + x_offset), 1400 * height_factor + y_offset))
+        right_green_zone.append(QPointF(width - (3000 * width_factor + x_offset), 1100 * height_factor + y_offset))
+        painter.setPen(QPen(QColor(76, 190, 75)))
+        painter.setBrush(QBrush(QColor(76, 190, 75)))
+        painter.drawPolygon(right_green_zone)
+        right_blue_zone = QPolygonF()
+        right_blue_zone.append(QPointF(width - (2550 * width_factor + x_offset), 800 * height_factor + y_offset))
+        right_blue_zone.append(QPointF(width - (2550 * width_factor + x_offset), 1100 * height_factor + y_offset))
+        right_blue_zone.append(QPointF(width - (3000 * width_factor + x_offset), 1100 * height_factor + y_offset))
+        right_blue_zone.append(QPointF(width - (3000 * width_factor + x_offset), 800 * height_factor + y_offset))
+        painter.setPen(QPen(QColor(41, 126, 203)))
+        painter.setBrush(QBrush(QColor(41, 126, 203)))
+        painter.drawPolygon(right_blue_zone)
 
         painter.setPen(old_pen)
         painter.setBrush(old_brush)

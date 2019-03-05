@@ -5,7 +5,7 @@ from PyQt5.QtWidgets import QWidget, QPushButton
 
 from obstacle import TABLE_HEIGHT, TABLE_WIDTH
 
-ROBOT_COLOR = (0,255,0)
+ROBOT_COLOR = (0,255,0, 180)
 ROBOT_ORIENTATION_COLOR = (0,0,0)
 ROBOT_TRAJECTORY_COLOR = (215,215,215)
 

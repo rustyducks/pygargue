@@ -156,6 +156,15 @@ class App(QWidget):
         painter.setBrush(QBrush(QColor(41, 126, 203)))
         painter.drawPolygon(right_blue_zone)
 
+        left_chaos_zone = QRectF(850 * width_factor + x_offset, height - 1100 * height_factor + y_offset,
+                                 300 * width_factor, 300 * height_factor)
+        right_chaos_zone = QRectF(1850 * width_factor + x_offset, height - 1100 * height_factor + y_offset,
+                                  300 * width_factor, 300 * height_factor)
+        painter.setPen(QPen(QColor(0, 0, 0)))
+        painter.setBrush(QBrush(QColor(0, 0, 0, 75)))
+        painter.drawEllipse(left_chaos_zone)
+        painter.drawEllipse(right_chaos_zone)
+
         painter.setPen(old_pen)
         painter.setBrush(old_brush)
 

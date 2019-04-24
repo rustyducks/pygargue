@@ -49,6 +49,7 @@ class App(QWidget):
         self.repaint_mutex.acquire()
         self.initUI()
         self.repaint_mutex.release()
+        self.running = False
  
     def initUI(self):
         self.setWindowTitle(self.title)
@@ -227,47 +228,48 @@ class App(QWidget):
             self.ivy.send_action(11)
         elif key == Qt.Key_Equal:
             self.ivy.send_action(12)
-        #elif key == Qt.Key_Z:
-        #    self.robot_speed_command[1] = -1
-        #    self.ivy.send_speed_direction(self.robot_speed_command)
         elif key == Qt.Key_Z:
             self.robot_speed_command[0] = 1
-            self.ivy.send_speed_direction(self.robot_speed_command)
-        #elif key == Qt.Key_S:
-        #    self.robot_speed_command[1] = 1
-        #    self.ivy.send_speed_direction(self.robot_speed_command)
+            self.send_speed_direction(self.robot_speed_command)
         elif key == Qt.Key_S:
             self.robot_speed_command[0] = -1
-            self.ivy.send_speed_direction(self.robot_speed_command)
+            self.send_speed_direction(self.robot_speed_command)
         elif key == Qt.Key_Q:
             self.robot_speed_command[2] = 1
-            self.ivy.send_speed_direction(self.robot_speed_command)
+            self.send_speed_direction(self.robot_speed_command)
         elif key == Qt.Key_D:
             self.robot_speed_command[2] = -1
-            self.ivy.send_speed_direction(self.robot_speed_command)
+            self.send_speed_direction(self.robot_speed_command)
+        elif key == Qt.Key_Shift:
+            self.running = True
+            self.send_speed_direction(self.robot_speed_command)
+
+    def send_speed_direction(self, cmds):
+        mod_cmds = cmds
+        if self.running is True:
+            mod_cmds = list(map(lambda n:n*2, cmds))
+        self.ivy.send_speed_direction(mod_cmds)
+
 
     def keyReleaseEvent(self, event:QKeyEvent):
         if event.isAutoRepeat():
             return
         key = event.key()
-        #if key == Qt.Key_Z:
-        #    self.robot_speed_command[1] = 0
-        #    self.ivy.send_speed_direction(self.robot_speed_command)
         if key == Qt.Key_Z:
             self.robot_speed_command[0] = 0
-            self.ivy.send_speed_direction(self.robot_speed_command)
-        #elif key == Qt.Key_S:
-        #    self.robot_speed_command[1] = 0
-        #    self.ivy.send_speed_direction(self.robot_speed_command)
+            self.send_speed_direction(self.robot_speed_command)
         elif key == Qt.Key_S:
             self.robot_speed_command[0] = 0
-            self.ivy.send_speed_direction(self.robot_speed_command)
+            self.send_speed_direction(self.robot_speed_command)
         elif key == Qt.Key_Q:
             self.robot_speed_command[2] = 0
-            self.ivy.send_speed_direction(self.robot_speed_command)
+            self.send_speed_direction(self.robot_speed_command)
         elif key == Qt.Key_D:
             self.robot_speed_command[2] = 0
-            self.ivy.send_speed_direction(self.robot_speed_command)
+            self.send_speed_direction(self.robot_speed_command)
+        elif key == Qt.Key_Shift:
+            self.running = False
+            self.send_speed_direction(self.robot_speed_command)
 
     def mousePressEvent(self, event:QMouseEvent):
         width_factor = self.table_width / 3000

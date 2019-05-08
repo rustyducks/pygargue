@@ -32,7 +32,7 @@ class Polygon(Obstacle):
         polygon = QPolygonF()
         if inflate_radius is None:
             for pt in self.points:
-                polygon.append(QPointF(pt[0] * width_factor + x_offset, height - (pt[1] * height_factor + y_offset))) # X coordinates must be symetrical because the table and the window origin are not the same
+                polygon.append(QPointF(pt[0] * width_factor + x_offset, height - (pt[1] * height_factor + y_offset)))
         else:
             pco = pyclipper.PyclipperOffset()
             points = tuple(self.points)
@@ -59,8 +59,8 @@ class Circle(Obstacle):
 
         rect_width = radius * 2 * width_factor
         rect_height = radius * 2 * height_factor
-        top_left_x = (self.center[0] - radius) * width_factor + x_offset # Y coordinates must be symetrical because the table and the window origin are not the same
-        top_left_y = height - (self.center[1] - radius) * height_factor + y_offset + rect_height
+        top_left_x = (self.center[0] - radius) * width_factor + x_offset
+        top_left_y = height - (self.center[1] - radius) * height_factor + y_offset - rect_height
         ellipse = QRectF(top_left_x, top_left_y, rect_width, rect_height)
         return "drawEllipse", ellipse
 

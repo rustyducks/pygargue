@@ -297,7 +297,7 @@ class App(QWidget):
             y_release = event.y() / height_factor
             dx = x_release - self.x_press
             dy = y_release - self.y_press
-            theta = atan2(dy, -dx)
+            theta = atan2(-dy, dx)
             self.ivy.send_go_to_orient(int(self.x_press), 2000 - int(self.y_press), theta)
         self.x_press = None
         self.y_press = None

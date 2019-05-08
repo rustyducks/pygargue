@@ -5,7 +5,7 @@ from obstacle import Polygon, Circle
 from point import Point
 
 IVY_APP_NAME = "Pygargue"
-DEFAULT_BUS = '192.168.1.255:2010'
+DEFAULT_BUS = '127:2010'
 
 NEW_POLYGON_OBSTACLE_REGEXP = "New Obstacle id : (.*) type : POLYGON points : (.*)"  # eg : New Obstacle id : 3 type : POLYGON points : 1500,350;1500,650;1000,650;1000,350
 NEW_CIRCLE_OBSTACLE_REGEXP = "New Obstacle id : (.*) type : CIRCLE center : (.*) radius : (.*)"  # eg : New Obstacle id : 6 type : CIRCLE center : 500,800 radius : 150
@@ -35,7 +35,7 @@ class Ivy:
         for pt in arg[1].split(";"):
             x, y = pt.split(',')
             polygon.points.append((float(x), float(y)))
-        self.app.obstacles.append(polygon)
+        self.app.obstacles[int(arg[0])] = polygon
         self.app.repaint_mutex.acquire()
         self.app.repaint()
         self.app.repaint_mutex.release()
@@ -45,7 +45,7 @@ class Ivy:
         xc, yc = arg[1].split(',')
         circle.center = (float(xc), float(yc))
         circle.radius = float(arg[2])
-        self.app.obstacles.append(circle)
+        self.app.obstacles[int(arg[0])] = circle
         self.app.repaint_mutex.acquire()
         self.app.repaint()
         self.app.repaint_mutex.release()

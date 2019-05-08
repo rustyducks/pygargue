@@ -38,8 +38,8 @@ class App(QWidget):
         self.table_height = 800
         self.x_press = None
         self.y_press = None
-        self.obstacles = []  # type:list[Obstacle]
-        self.highlighted_point = {}  # type: dict[int, Point]
+        self.obstacles = {}  # type:dict[int: Obstacle]
+        self.highlighted_point = {}  # type: dict[int: Point]
         self.highlighted_angles = {}  # type: dict[int, float]
         self.feed_forward_arrow = None  # ((xs, ys), (xe, ye))
         self.feed_forward_arrow_enabled = False
@@ -79,7 +79,7 @@ class App(QWidget):
         painter.drawLine(0, self.table_height-1, self.table_width-1, self.table_height-1)
         painter.drawLine(self.table_width-1, self.table_height-1, self.table_width-1, 0)
         painter.drawLine(self.table_width-1, 0, 0, 0)
-        for obs in self.obstacles:
+        for obs in self.obstacles.values():
             painter.setPen(QPen(QColor(*OBSTACLE_COLOR)))
             painter.setBrush(QBrush(QColor(*OBSTACLE_COLOR)))
             draw_function_name, draw_object = obs.to_qobject(0, 0, self.table_width - 1, self.table_height - 1)
@@ -201,7 +201,7 @@ class App(QWidget):
             return
         key = event.key()
         if key == Qt.Key_G:
-            img = ObstacleMap(self.obstacles, GRAPH_TABLE_RATIO, self.robot.radius)
+            img = ObstacleMap(self.obstacles.values(), GRAPH_TABLE_RATIO, self.robot.radius)
             print("dumping")
             img.dump_obstacle_grid_to_file("graph.txt")
         elif key == Qt.Key_Ampersand:

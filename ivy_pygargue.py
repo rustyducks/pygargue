@@ -58,7 +58,7 @@ class Ivy:
         trajectory = []
         for pt in arg[0].split(';'):
             x, y = pt.split(',')
-            trajectory.append((int(x),int(y)))
+            trajectory.append((float(x),float(y)))
         self.app.new_trajectory(trajectory)
 
     def on_new_highlight_point(self, agent, *arg):

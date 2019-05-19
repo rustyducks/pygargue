@@ -65,6 +65,8 @@ class ObstacleMap(QImage):
     def dump_obstacle_grid_to_file(self, filename):
         array = self.generate_obstacle_grid()
         with open(filename, 'w') as f:
+            f.write("P1\n")
+            f.write("{} {}\n".format(self.table_width, self.table_height))
             for i in range(self.table_height):
                 for j in range(self.table_width):
                     f.write(str(array[j, i])[0])

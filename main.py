@@ -22,7 +22,7 @@ from point import Point
 OBSTACLE_COLOR = (66, 134, 244)
 BACKGROUND_COLOR = (25, 25, 25)
 FEEDFORWARD_ARROW_COLOR = (143, 183, 247)
-GRAPH_TABLE_RATIO = 0.2  # graph/table ratio for discreted graph generation
+GRAPH_TABLE_RATIO = 0.1  # graph/table ratio for discreted graph generation
 
 THRESHOLD_DISTANCE_ANGLE_SELECTION = 20
 
@@ -203,7 +203,7 @@ class App(QWidget):
         if key == Qt.Key_G:
             img = ObstacleMap(self.obstacles.values(), GRAPH_TABLE_RATIO, self.robot.radius)
             print("dumping")
-            img.dump_obstacle_grid_to_file("graph.txt")
+            img.dump_obstacle_grid_to_file("graph.pbm")
         elif key == Qt.Key_Ampersand:
             self.ivy.send_action(1)
         elif key == Qt.Key_Eacute:

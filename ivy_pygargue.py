@@ -9,14 +9,14 @@ DEFAULT_BUS = '127:2010'
 
 NEW_POLYGON_OBSTACLE_REGEXP = "New Obstacle id : (.*) type : POLYGON points : (.*)"  # eg : New Obstacle id : 3 type : POLYGON points : 1500,350;1500,650;1000,650;1000,350
 NEW_CIRCLE_OBSTACLE_REGEXP = "New Obstacle id : (.*) type : CIRCLE center : (.*) radius : (.*)"  # eg : New Obstacle id : 6 type : CIRCLE center : 500,800 radius : 150
-UPDATE_ROBOT_POSITION_REGEXP = "Update robot pose (.*)"  # eg : Update robot pose 325;1523;-1.57785
+UPDATE_ROBOT_POSITION_REGEXP = "PosReport .+ (.*)"  # eg : Update robot pose 325;1523;-1.57785
 NEW_TRAJECTORY_REGEXP = "New trajectory (.*)"  # eg : New trajectory 528,450;1200,564;846,1486
 HIGHLIGHT_POINT_REGEXP = "Highlight point (.*)"  # eg : Highlight point 3;1500;1250
 HIGHLIGHT_ANGLE_REGEXP = "Highlight angle (.*)"  # eg : Highlight angle 5;0.707
-GO_TO_ORIENT_REGEXP = "Go to orient {},{},{}"
-GO_TO_REGEXP = "Go to linear {},{}"
+GO_TO_ORIENT_REGEXP = "PosCmdOrient daneel {},{},{}"
+GO_TO_REGEXP = "PosCmd daneel {},{}"
 CUSTOM_ACTION_REGEXP = "Custom action {}"
-SPEED_DIRECTION_REGEXP = "Direction {},{},{}"  # eg : Direction 1,1,1  or 1,0,-1 (vertical, horiztonal, orientation)
+SPEED_DIRECTION_REGEXP = "SpeedCmd daneel {},{},{}"  # eg : Direction 1,1,1  or 1,0,-1 (vertical, horiztonal, orientation)
 
 class Ivy:
     def __init__(self, application, bus=DEFAULT_BUS):

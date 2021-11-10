@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+// Downlink messages
+
+message SpeedCommand {
+    float vx = 1;
+    float vy = 2;
+    float vtheta = 3;
+}
+
+message PIDGains {
+    float kp = 1;
+    float ki = 2;
+    float kd = 3;
+}
+
+
+message DownMessage {
+    oneof inner{
+        SpeedCommand speed_command = 1;
+        PIDGains pid_gains = 2;
+    
+    }
+}
+
+
+
+

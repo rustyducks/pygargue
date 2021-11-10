@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+// Uplink messages
+
+// robot position
+message PosReport {
+    float pos_x = 1;
+    float pos_y = 2;
+    float pos_theta = 3;
+}
+
+// robot speed, taken from motor encoders or codinf wheels
+message SpeedReport {
+    float vx = 1;
+    float vy = 2;
+    float vtheta = 3;
+}
+
+// motors speed/command/...
+message MotorReport {
+    float m1 = 1;
+    float m2 = 2;
+    float m3 = 3;
+}
+
+message BatteryReport {
+    float voltage = 1;
+}
+
+message UpMessage {
+    oneof inner{
+        PosReport pos_report = 1;
+        SpeedReport speed_report = 2;
+        BatteryReport battery_report = 3;
+        MotorReport motor_report = 4;
+    }
+}
+
+
+
+

@@ -12,8 +12,11 @@ class Robot(QObject):
         self.speed = Speed(vx=0, vy=0, vtheta=0)
         self.bat = 0
 
-    def set_pos(self, x, y, theta):
-        self.pos = Pos(x=x, y=y, theta=theta)
+    def set_pos(self, pos: Pos):
+        self.pos = pos
+
+    def set_speed(self, speed: Speed):
+        self.speed = speed
 
     def set_bat(self, bat):
         self.bat = bat

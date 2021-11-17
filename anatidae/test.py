@@ -19,12 +19,18 @@ class RcvState(Enum):
     PAYLOAD_CHK = 3
 
 
+class MsgClass(Enum):
+    UP = 0
+    DOWN = 1
+
+
 class SerialCom:
 
-    def __init__(self, port, baudrate=115200):
+    def __init__(self, port, baudrate=115200, msg_class=MsgClass.UP):
         self.serial = Serial(port, baudrate, timeout=0.01)
         self._rcv_state = RcvState.START1
         self._nb_bytes_expected = 1
+        self.msg_class = msg_class
 
     @staticmethod
     def compute_chk(payload):
@@ -53,11 +59,15 @@ class SerialCom:
                 payload = self.serial.read(self._nb_bytes_expected - 1)  # read message content
                 chk = ord(self.serial.read())
                 self._rcv_state = RcvState.START1
+                self._nb_bytes_expected = 1
                 if chk == self.compute_chk(payload):
-                    umsg = clu.UpMessage()
+                    if self.msg_class == MsgClass.UP:
+                        msg = clu.UpMessage()
+                    else:
+                        msg = cld.DownMessage()
                     try:
-                        umsg.ParseFromString(payload)
-                        return umsg
+                        msg.ParseFromString(payload)
+                        return msg
                     except protobuf.message.DecodeError:
                         return None
                 else:
@@ -105,6 +115,8 @@ if __name__ == "__main__":
 
     port = sys.argv[1] if len(sys.argv) >= 2 else "/dev/bmp_tty"
     baudrate = int(sys.argv[2]) if len(sys.argv) >= 3 else 115200
+    msg_class = MsgClass.UP if len(sys.argv) < 4 else MsgClass.DOWN
+    print(msg_class)
 
     com = SerialCom(port, baudrate)
 
@@ -115,4 +127,5 @@ if __name__ == "__main__":
         if msg is not None:
             j = com.msg_to_json(msg)
             print(j)
+            print()
             s.sendto(j.encode(), plotjuggler_udp)

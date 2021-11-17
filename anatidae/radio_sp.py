@@ -21,6 +21,7 @@ class RadioSP(QThread):
     Radio protobuf over serial
     """
 
+    speed_changed = pyqtSignal(str, Speed)  # id, Speed
     pos_changed = pyqtSignal(str, Pos)  # id, Pos
     bat_changed = pyqtSignal(str, float)  # id, bat
 
@@ -81,12 +82,9 @@ class RadioSP(QThread):
             self.bat_changed.emit("dafi", u.battery_report.voltage)
             #print(f"battery_report: {u.battery_report.voltage}")
         elif u.HasField("pos_report"):
-            pass
-            #print(f"pos report: {u.pos_report.pos_x:.2f} {u.pos_report.pos_y:.2f} {u.pos_report.pos_theta:.2f}")
             self.pos_changed.emit("dafi", Pos(u.pos_report.pos_x, u.pos_report.pos_y, u.pos_report.pos_theta))
         elif u.HasField("speed_report"):
-            pass
-            #print(f"speed report: {u.speed_report.vx:.2f} {u.speed_report.vy:.2f} {u.speed_report.vtheta:.2f}")
+            self.speed_changed.emit("dafi", Speed(u.speed_report.vx, u.speed_report.vy, u.speed_report.vtheta))
         elif u.HasField("motor_report"):
             pass
             #print(f"motor report: {u.motor_report.m1} {u.motor_report.m2} {u.motor_report.m3}")
@@ -99,6 +97,7 @@ class RadioSP(QThread):
         chk = struct.pack("<B", self.compute_chk(payload))
         data = header + payload + chk
         self.serial.write(data)
+        self.serial.flushOutput()
 
     def send_speed_cmd(self, speed: Speed):
         msg = cld.DownMessage()

@@ -8,7 +8,7 @@ from utils import *
 from math import cos, sin, pi
 
 CMD_SPEED = 100
-CMD_OMEGA = 0.2
+CMD_OMEGA = 0.3
 
 
 ROBOT_SIZE = 30
@@ -18,14 +18,17 @@ ARROW_ANGLE = pi + pi/8
 
 class TableView(QWidget):
 
-    def __init__(self, rman: robots_manager.RobotsManager, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         QWidget.__init__(self, *args, **kwargs)
-        self.pix = QPixmap("map.png")
-        self.robot_manager = rman   # type: robots_manager.RobotsManager
-        self.robot_manager.robot_pos_changed.connect(self.update)
+        self.pix = QPixmap("data/map2022.png")
+        self.robot_manager = None
         self.messenger = Messenger()
-        self.robot_manager.register_emiter(self.messenger)
         self.speed_cmd = Speed(0, 0, 0)
+
+    def set_robot_manager(self, rman):
+        self.robot_manager = rman  # type: robots_manager.RobotsManager
+        self.robot_manager.robot_pos_changed.connect(self.update)
+        self.robot_manager.register_emiter(self.messenger)
 
     def paintEvent(self, e: QPaintEvent) -> None:
         painter = QPainter(self)

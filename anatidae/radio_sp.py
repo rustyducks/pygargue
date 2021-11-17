@@ -1,5 +1,4 @@
 import time
-
 from PyQt5.QtCore import *
 from serial import Serial
 from enum import Enum
@@ -8,6 +7,8 @@ from generated import coinlang_down_pb2 as cld, coinlang_up_pb2 as clu
 from google import protobuf
 from robot import *
 from utils import *
+from abstract_radio import AbstractRadio, filter_sender
+
 
 class RcvState(Enum):
     START1 = 0
@@ -16,28 +17,28 @@ class RcvState(Enum):
     PAYLOAD_CHK = 3
 
 
-class RadioSP(QThread):
+class RadioSP(QThread, AbstractRadio):
     """
     Radio protobuf over serial
     """
 
-    speed_changed = pyqtSignal(str, Speed)  # id, Speed
-    pos_changed = pyqtSignal(str, Pos)  # id, Pos
-    bat_changed = pyqtSignal(str, float)  # id, bat
-
-    def __init__(self, port, baudrate, parent=None):
-        super(RadioSP, self).__init__(parent)
+    def __init__(self, port, baudrate, rid="dafi", parent=None):
+        AbstractRadio.__init__(self)
+        QThread.__init__(self, parent)
         self.serial = Serial(port, baudrate, timeout=0.01)
         self._rcv_state = RcvState.START1
         self._nb_bytes_expected = 1
         self.stop_requested = False
+        self.rid = rid
+        self.add_rid(rid)
 
     def stop(self):
+        print("stopping...")
         self.requestInterruption()
         while self.isRunning():
+            time.sleep(0.001)
             pass
         self.serial.close()
-
 
     @staticmethod
     def compute_chk(payload):
@@ -79,12 +80,11 @@ class RadioSP(QThread):
 
     def handle_umsg(self, u):
         if u.HasField("battery_report"):
-            self.bat_changed.emit("dafi", u.battery_report.voltage)
-            #print(f"battery_report: {u.battery_report.voltage}")
+            self.emit_bat_changed(self.rid, u.battery_report.voltage)
         elif u.HasField("pos_report"):
-            self.pos_changed.emit("dafi", Pos(u.pos_report.pos_x, u.pos_report.pos_y, u.pos_report.pos_theta))
+            self.emit_pos_changed(self.rid, Pos(u.pos_report.pos_x, u.pos_report.pos_y, u.pos_report.pos_theta))
         elif u.HasField("speed_report"):
-            self.speed_changed.emit("dafi", Speed(u.speed_report.vx, u.speed_report.vy, u.speed_report.vtheta))
+            self.emit_speed_changed(self.rid, Speed(u.speed_report.vx, u.speed_report.vy, u.speed_report.vtheta))
         elif u.HasField("motor_report"):
             pass
             #print(f"motor report: {u.motor_report.m1} {u.motor_report.m2} {u.motor_report.m3}")
@@ -99,7 +99,8 @@ class RadioSP(QThread):
         self.serial.write(data)
         self.serial.flushOutput()
 
-    def send_speed_cmd(self, speed: Speed):
+    @filter_sender
+    def send_speed_cmd(self, rid, speed: Speed):
         msg = cld.DownMessage()
         msg.speed_command.vx = speed.vx
         msg.speed_command.vy = speed.vy
@@ -112,4 +113,3 @@ class RadioSP(QThread):
             msg = self.check_msgs()
             if msg is not None:
                 self.handle_umsg(msg)
-

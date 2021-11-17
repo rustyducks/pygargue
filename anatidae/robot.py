@@ -1,5 +1,4 @@
 from PyQt5.QtCore import *
-from collections import namedtuple
 from utils import *
 
 

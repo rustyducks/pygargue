@@ -14,14 +14,18 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QHBoxLayout" name="horizontalLayout">
+   <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,0">
     <item>
      <widget class="TableView" name="table_view" native="true"/>
     </item>
     <item>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
-       <widget class="RobotStatus" name="robot_status" native="true"/>
+       <widget class="RobotStatus" name="robot_status">
+        <property name="currentIndex">
+         <number>-1</number>
+        </property>
+       </widget>
       </item>
       <item>
        <spacer name="verticalSpacer">
@@ -54,15 +58,15 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>RobotStatus</class>
-   <extends>QWidget</extends>
-   <header>robot_status.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>TableView</class>
    <extends>QWidget</extends>
    <header>table_view.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>RobotStatus</class>
+   <extends>QTabWidget</extends>
+   <header>robot_status.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

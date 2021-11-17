@@ -87,7 +87,7 @@ class TableView(QWidget):
         elif e.key() == Qt.Key_Shift:
             self.speed_cmd.vx *= 2
             self.speed_cmd.vtheta *= 2
-        self.messenger.set_speed(self.speed_cmd)
+        self.messenger.set_speed_cmd(self.speed_cmd)
 
     def keyReleaseEvent(self, e: QKeyEvent) -> None:
         if e.isAutoRepeat():
@@ -103,8 +103,9 @@ class TableView(QWidget):
         elif e.key() == Qt.Key_Shift:
             self.speed_cmd.vx /= 2
             self.speed_cmd.vtheta /= 2
-        self.messenger.set_speed(self.speed_cmd)
+        self.messenger.set_speed_cmd(self.speed_cmd)
 
     def mousePressEvent(self, e: QMouseEvent) -> None:
+        self.setFocus()
         pass
 

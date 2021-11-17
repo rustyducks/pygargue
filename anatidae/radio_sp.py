@@ -8,6 +8,10 @@ from google import protobuf
 from robot import *
 from utils import *
 from abstract_radio import AbstractRadio, filter_sender
+import socket
+import json
+
+plotjuggler_udp = ("127.0.0.1", 9870)
 
 
 class RcvState(Enum):
@@ -31,6 +35,7 @@ class RadioSP(QThread, AbstractRadio):
         self.stop_requested = False
         self.rid = rid
         self.add_rid(rid)
+        self.soplot = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
     def stop(self):
         print("stopping...")
@@ -91,6 +96,16 @@ class RadioSP(QThread, AbstractRadio):
         else:
             print(u)
 
+    def msg_to_json(self, msg):
+        msg_name = msg.WhichOneof('inner')
+        inner = getattr(msg, msg_name)
+        d_msg = {msg_name: {}}
+        for f in inner.DESCRIPTOR.fields:
+            field_name = f.name
+            d_msg[msg_name][field_name] = getattr(inner, field_name)
+        d = {self.rid: d_msg}
+        return json.dumps(d)
+
     def send_msg(self, msg):
         payload = msg.SerializeToString()
         header = struct.pack("<BBB", 0xFF, 0xFF, len(payload))
@@ -107,9 +122,19 @@ class RadioSP(QThread, AbstractRadio):
         msg.speed_command.vtheta = speed.vtheta
         self.send_msg(msg)
 
+    @filter_sender
+    def send_pid_gains(self, rid, gains: PidGains):
+        msg = cld.DownMessage()
+        msg.pid_gains.kp = gains.kp
+        msg.pid_gains.ki = gains.ki
+        msg.pid_gains.kd = gains.kd
+        self.send_msg(msg)
+
     def run(self):
         while not self.isInterruptionRequested():
             time.sleep(0.001)
             msg = self.check_msgs()
             if msg is not None:
                 self.handle_umsg(msg)
+                j = self.msg_to_json(msg)
+                self.soplot.sendto(j.encode(), plotjuggler_udp)

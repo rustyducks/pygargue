@@ -5,6 +5,13 @@ from messenger import Messenger
 from abstract_radio import AbstractRadio
 
 
+def foradio(func):
+    def wrapped(self, *args):
+        for radio in self.radios:
+            func(self, radio, *args)
+    return wrapped
+
+
 class RobotsManager(QObject):
 
     robot_pos_changed = pyqtSignal(str, Pos)
@@ -31,10 +38,10 @@ class RobotsManager(QObject):
         def update_pos(*args): self.update_stuff("pos", *args)
         def update_speed(*args): self.update_stuff("speed", *args)
         def update_bat(*args): self.update_stuff("bat", *args)
+        fcs = {"pos": update_pos, "speed": update_speed, "bat": update_bat}
 
-        getattr(radio.messenger, f"pos_changed").connect(update_pos)
-        getattr(radio.messenger, f"speed_changed").connect(update_speed)
-        getattr(radio.messenger, f"bat_changed").connect(update_bat)
+        for name, func in fcs.items():
+            getattr(radio.messenger, f"{name}_changed").connect(func)
 
     def update_stuff(self, stuff_name, rid, stuff):
         if rid not in self.robots:
@@ -46,14 +53,23 @@ class RobotsManager(QObject):
         self.robots[rid] = r
         self.new_robot.emit(rid)
 
-    def send_speed_cmd(self, speed):
-        for radio in self.radios:
-            radio.send_speed_cmd(self.current_rid, speed)
+    def register_emiter(self, source: Messenger):
+        def send_speed_cmd(speed): self.send_stuff("speed_cmd", speed)
+        def send_pid_gains(gains): self.send_stuff("pid_gains", gains)
+
+        fcs = {"speed_cmd": send_speed_cmd, "pid_gains": send_pid_gains}
+
+        for name, func in fcs.items():
+            getattr(source, f"set_{name}_sig").connect(func)
+
+        #getattr(source, f"set_speed_sig").connect(send_speed_cmd)
+        #getattr(source, f"set_speed_sig").connect(send_pid_gains)
+
+        source.change_current_rid_sig.connect(self.set_current_rid)
 
     def set_current_rid(self, rid):
         self.current_rid = rid
 
-    def register_emiter(self, source: Messenger):
-        source.set_speed_sig.connect(self.send_speed_cmd)
-        source.change_current_rid_sig.connect(self.set_current_rid)
-
+    @foradio
+    def send_stuff(self, radio, stuffname, stuff):
+        getattr(radio, f"send_{stuffname}")(self.current_rid, stuff)

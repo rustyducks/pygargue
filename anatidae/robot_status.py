@@ -6,7 +6,7 @@ import robots_manager
 from messenger import Messenger
 from utils import *
 from generated.status import Ui_Status
-
+from typing import Dict
 
 class RStatus(QWidget, Ui_Status):
     def __init__(self, *args, **kwargs):
@@ -19,7 +19,7 @@ class RobotStatus(QTabWidget):
     def __init__(self, *args, **kwargs):
         QWidget.__init__(self, *args, **kwargs)
         self.robot_manager = None
-        self.tabs = {}
+        self.tabs = {}  # type: Dict[RStatus]
         self.messenger = Messenger()
         self.currentChanged.connect(self.tab_changed)
 
@@ -36,9 +36,18 @@ class RobotStatus(QTabWidget):
         self.messenger.change_current_rid(rid)
 
     def add_tab(self, rid):
-        self.tabs[rid] = RStatus()
-        self.addTab(self.tabs[rid], rid)
+        rs = RStatus()
+        self.tabs[rid] = rs
+        self.addTab(rs, rid)
         self.messenger.change_current_rid(rid)
+        rs.pid_gains_send_button.clicked.connect(lambda: self.send_pid_gains(rid))
+
+    def send_pid_gains(self, rid):
+        rs = self.tabs[rid]         # type: RStatus
+        kp = rs.kp_spin.value()
+        ki = rs.ki_spin.value()
+        kd = rs.kd_spin.value()
+        self.messenger.set_pid_gains(PidGains(kp, ki, kd))
 
     def update_bat(self, rid, bat):
         self.tabs[rid].bat_label.setText(f"{bat:.2f}")

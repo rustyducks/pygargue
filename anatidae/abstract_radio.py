@@ -44,3 +44,6 @@ class AbstractRadio:
 
     def send_speed_cmd(self, rid, speed):
         raise NotImplementedError()
+
+    def send_pid_gains(self, rid, gains):
+        raise NotImplementedError()

@@ -1,5 +1,9 @@
 #!/bin/bash
 
-# Generate the desktop source code.
+# Generate protobuf python code
 mkdir -p ./generated
-protoc -I../firmware/proto/ --python_out=./generated ../firmware/proto/*.proto
+protoc -I proto/ --python_out=./generated proto/*.proto
+
+#generate PyQt5 widget
+mkdir -p ui
+pyuic5 ui/robot_status.ui -o generated/status.py

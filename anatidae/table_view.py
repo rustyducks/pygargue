@@ -6,9 +6,10 @@ import robots_manager
 from messenger import Messenger
 from utils import *
 from math import cos, sin, pi
+from enum import Enum
 
-CMD_SPEED = 100
-CMD_OMEGA = 0.3
+CMD_SPEED = 20
+CMD_OMEGA = 0.1
 
 
 ROBOT_SIZE = 30
@@ -24,6 +25,9 @@ class TableView(QWidget):
         self.robot_manager = None
         self.messenger = Messenger()
         self.speed_cmd = Speed(0, 0, 0)
+        self.speed_timer = QTimer(self)
+        self.speed_timer.timeout.connect(self.send_speed_command)
+        self.speed_timer.start(200)
 
     def set_robot_manager(self, rman):
         self.robot_manager = rman  # type: robots_manager.RobotsManager
@@ -87,7 +91,7 @@ class TableView(QWidget):
         elif e.key() == Qt.Key_Shift:
             self.speed_cmd.vx *= 2
             self.speed_cmd.vtheta *= 2
-        self.messenger.set_speed_cmd(self.speed_cmd)
+        self.send_speed_command()
 
     def keyReleaseEvent(self, e: QKeyEvent) -> None:
         if e.isAutoRepeat():
@@ -103,6 +107,9 @@ class TableView(QWidget):
         elif e.key() == Qt.Key_Shift:
             self.speed_cmd.vx /= 2
             self.speed_cmd.vtheta /= 2
+        self.send_speed_command()
+
+    def send_speed_command(self):
         self.messenger.set_speed_cmd(self.speed_cmd)
 
     def mousePressEvent(self, e: QMouseEvent) -> None:

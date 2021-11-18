@@ -8,10 +8,7 @@ from google import protobuf
 from robot import *
 from utils import *
 from abstract_radio import AbstractRadio, filter_sender
-import socket
-import json
-
-plotjuggler_udp = ("127.0.0.1", 9870)
+from logger import Logger
 
 
 class RcvState(Enum):
@@ -26,16 +23,15 @@ class RadioSP(QThread, AbstractRadio):
     Radio protobuf over serial
     """
 
-    def __init__(self, port, baudrate, rid="dafi", parent=None):
-        AbstractRadio.__init__(self)
-        QThread.__init__(self, parent)
+    def __init__(self, port, baudrate, logger: Logger, rid="dafi", name="Ana", parent=None):
+        super().__init__(logger=logger, parent=parent)
         self.serial = Serial(port, baudrate, timeout=0.01)
         self._rcv_state = RcvState.START1
         self._nb_bytes_expected = 1
         self.stop_requested = False
         self.rid = rid
         self.add_rid(rid)
-        self.soplot = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.name = name
 
     def stop(self):
         print("stopping...")
@@ -96,15 +92,15 @@ class RadioSP(QThread, AbstractRadio):
         else:
             print(u)
 
-    def msg_to_json(self, msg):
+    def msg_to_dict(self, src, msg):
         msg_name = msg.WhichOneof('inner')
         inner = getattr(msg, msg_name)
         d_msg = {msg_name: {}}
         for f in inner.DESCRIPTOR.fields:
             field_name = f.name
             d_msg[msg_name][field_name] = getattr(inner, field_name)
-        d = {self.rid: d_msg}
-        return json.dumps(d)
+        d = {src: d_msg}
+        return d
 
     def send_msg(self, msg):
         payload = msg.SerializeToString()
@@ -113,6 +109,8 @@ class RadioSP(QThread, AbstractRadio):
         data = header + payload + chk
         self.serial.write(data)
         self.serial.flushOutput()
+        d = self.msg_to_dict(self.name, msg)
+        self.log_dict(self.rid, d)
 
     @filter_sender
     def send_speed_cmd(self, rid, speed: Speed):
@@ -136,5 +134,5 @@ class RadioSP(QThread, AbstractRadio):
             msg = self.check_msgs()
             if msg is not None:
                 self.handle_umsg(msg)
-                j = self.msg_to_json(msg)
-                self.soplot.sendto(j.encode(), plotjuggler_udp)
+                d = self.msg_to_dict(self.rid, msg)
+                self.log_dict(self.name, d)

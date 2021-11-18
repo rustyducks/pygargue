@@ -1,6 +1,7 @@
 
 from radio_messenger import RadioMessenger
 from utils import *
+from logger import Logger
 
 
 def filter_sender(func):
@@ -16,12 +17,17 @@ def filter_sender(func):
 
 class AbstractRadio:
 
-    def __init__(self):
+    def __init__(self, logger: Logger, **kwargs):
+        super(AbstractRadio, self).__init__(**kwargs)
         self.messenger = RadioMessenger()
         self.rids = []
+        self.logger = logger    # type: Logger
 
     def add_rid(self, rid):
         self.rids.append(rid)
+
+    def log_dict(self, dst, d):
+        self.logger.log_dict(dst, d)
 
     def start(self):
         raise NotImplementedError("The start method must be implemented!")

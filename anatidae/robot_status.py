@@ -8,6 +8,7 @@ from utils import *
 from generated.status import Ui_Status
 from typing import Dict
 
+
 class RStatus(QWidget, Ui_Status):
     def __init__(self, *args, **kwargs):
         QWidget.__init__(self, *args, **kwargs)
@@ -44,10 +45,12 @@ class RobotStatus(QTabWidget):
 
     def send_pid_gains(self, rid):
         rs = self.tabs[rid]         # type: RStatus
+        pid_no = int(rs.pid_no_combo.currentText())
+        ng = rs.ng_spin.value()
         kp = rs.kp_spin.value()
         ki = rs.ki_spin.value()
         kd = rs.kd_spin.value()
-        self.messenger.set_pid_gains(PidGains(kp, ki, kd))
+        self.messenger.set_pid_gains(PidGains(pid_no, ng, kp, ki, kd))
 
     def update_bat(self, rid, bat):
         self.tabs[rid].bat_label.setText(f"{bat:.2f}")

@@ -9,9 +9,11 @@ message SpeedCommand {
 }
 
 message PIDGains {
-    float kp = 1;
-    float ki = 2;
-    float kd = 3;
+    int32 pid_no = 1;
+    float kp = 2;
+    float ki = 3;
+    float kd = 4;
+    float ng = 5;
 }
 
 

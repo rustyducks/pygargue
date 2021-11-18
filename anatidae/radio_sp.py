@@ -86,11 +86,9 @@ class RadioSP(QThread, AbstractRadio):
             self.emit_pos_changed(self.rid, Pos(u.pos_report.pos_x, u.pos_report.pos_y, u.pos_report.pos_theta))
         elif u.HasField("speed_report"):
             self.emit_speed_changed(self.rid, Speed(u.speed_report.vx, u.speed_report.vy, u.speed_report.vtheta))
-        elif u.HasField("motor_report"):
-            pass
-            #print(f"motor report: {u.motor_report.m1} {u.motor_report.m2} {u.motor_report.m3}")
         else:
-            print(u)
+            pass
+            #print(u)
 
     def msg_to_dict(self, src, msg):
         msg_name = msg.WhichOneof('inner')
@@ -123,6 +121,8 @@ class RadioSP(QThread, AbstractRadio):
     @filter_sender
     def send_pid_gains(self, rid, gains: PidGains):
         msg = cld.DownMessage()
+        msg.pid_gains.pid_no = gains.pid_no
+        msg.pid_gains.ng = gains.ng
         msg.pid_gains.kp = gains.kp
         msg.pid_gains.ki = gains.ki
         msg.pid_gains.kd = gains.kd

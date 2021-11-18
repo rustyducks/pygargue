@@ -17,6 +17,8 @@ class Pos:
 
 @dataclass
 class PidGains:
+    pid_no: int
+    ng: float
     kp: float
     ki: float
     kd: float

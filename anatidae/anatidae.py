@@ -22,7 +22,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.table_view.set_robot_manager(self.robot_manager)
         self.table_view.setFocus()
         self.logger = Logger("/tmp/robot.log")
-        self.rsp = RadioSP("/dev/ttyUSB0", 57600, self.logger, rid="Daneel", parent=self)
+        self.rsp = RadioSP("/dev/paparazzi/xbee", 57600, self.logger, rid="Daneel", parent=self)
         self.robot_manager.add_radio(self.rsp)
 
     def closeEvent(self, e: QtGui.QCloseEvent) -> None:

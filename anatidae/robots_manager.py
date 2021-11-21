@@ -1,28 +1,20 @@
 from PyQt5.QtCore import *
 from robot import *
-from typing import Dict
-from messenger import Messenger
+from typing import Dict, List
 from abstract_radio import AbstractRadio
-
-
-def foradio(func):
-    def wrapped(self, *args):
-        for radio in self.radios:
-            func(self, radio, *args)
-    return wrapped
+from generated import messages_pb2 as m
 
 
 class RobotsManager(QObject):
 
-    robot_pos_changed = pyqtSignal(str, Pos)
-    robot_speed_changed = pyqtSignal(str, Speed)
-    robot_bat_changed = pyqtSignal(str, float)
-    new_robot = pyqtSignal(str)
+    robot_msg_sig = pyqtSignal(str, m.Message)
+    new_robot_sig = pyqtSignal(str)
+    change_current_rid_sig = pyqtSignal(str)
 
     def __init__(self, parent=None):
         super(RobotsManager, self).__init__(parent)
         self.robots = {}    # type: Dict[str, Robot]
-        self.radios = []
+        self.radios = []    # type: List[AbstractRadio]
         self.current_rid = "NOP"
 
     def stop(self):
@@ -31,45 +23,24 @@ class RobotsManager(QObject):
 
     def add_radio(self, radio: AbstractRadio):
         self.radios.append(radio)
-        self.connect_radio(radio)
+        radio.messenger.robot_msg_sig.connect(self.handle_msg)
         radio.start()
 
-    def connect_radio(self, radio):
-        def update_pos(*args): self.update_stuff("pos", *args)
-        def update_speed(*args): self.update_stuff("speed", *args)
-        def update_bat(*args): self.update_stuff("bat", *args)
-        fcs = {"pos": update_pos, "speed": update_speed, "bat": update_bat}
-
-        for name, func in fcs.items():
-            getattr(radio.messenger, f"{name}_changed").connect(func)
-
-    def update_stuff(self, stuff_name, rid, stuff):
-        if rid not in self.robots:
-            self.add_robot(rid, Robot(rid))
-        getattr(self.robots[rid], f"set_{stuff_name}")(stuff)
-        getattr(self, f"robot_{stuff_name}_changed").emit(rid, stuff)
-
-    def add_robot(self, rid: str, r: Robot):
+    def add_robot(self, rid):
+        r = Robot(rid)
         self.robots[rid] = r
-        self.new_robot.emit(rid)
-
-    def register_emiter(self, source: Messenger):
-        def send_speed_cmd(speed): self.send_stuff("speed_cmd", speed)
-        def send_pid_gains(gains): self.send_stuff("pid_gains", gains)
-
-        fcs = {"speed_cmd": send_speed_cmd, "pid_gains": send_pid_gains}
-
-        for name, func in fcs.items():
-            getattr(source, f"set_{name}_sig").connect(func)
-
-        #getattr(source, f"set_speed_sig").connect(send_speed_cmd)
-        #getattr(source, f"set_speed_sig").connect(send_pid_gains)
-
-        source.change_current_rid_sig.connect(self.set_current_rid)
+        self.new_robot_sig.emit(rid)
 
     def set_current_rid(self, rid):
         self.current_rid = rid
+        self.change_current_rid_sig.emit(rid)
 
-    @foradio
-    def send_stuff(self, radio, stuffname, stuff):
-        getattr(radio, f"send_{stuffname}")(self.current_rid, stuff)
+    def handle_msg(self, src, msg: m.Message):
+        if src not in self.robots:
+            self.add_robot(src)
+        self.robots[src].handle_msg(msg)
+        self.robot_msg_sig.emit(src, msg)
+
+    def send_msg(self, dst, msg: m.Message):
+        for radio in self.radios:
+            radio.send_msg(dst, msg)

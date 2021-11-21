@@ -3,7 +3,7 @@ from serial import Serial
 from enum import Enum
 import struct
 import time
-from generated import coinlang_down_pb2 as cld, coinlang_up_pb2 as clu
+from generated import messages_pb2 as m
 from google import protobuf
 import json
 import socket
@@ -30,7 +30,6 @@ class SerialCom:
         self.serial = Serial(port, baudrate, timeout=0.01)
         self._rcv_state = RcvState.START1
         self._nb_bytes_expected = 1
-        self.msg_class = msg_class
 
     @staticmethod
     def compute_chk(payload):
@@ -41,8 +40,10 @@ class SerialCom:
 
     def check_msgs(self):
         while self.serial.in_waiting >= self._nb_bytes_expected:
+            print("qsd")
             if self._rcv_state == RcvState.START1:  # wait for 0XFF
                 if ord(self.serial.read()) == 0xFF:
+                    print("start1 ok")
                     self._rcv_state = RcvState.START2
                     self._nb_bytes_expected = 1
             elif self._rcv_state == RcvState.START2:
@@ -61,10 +62,7 @@ class SerialCom:
                 self._rcv_state = RcvState.START1
                 self._nb_bytes_expected = 1
                 if chk == self.compute_chk(payload):
-                    if self.msg_class == MsgClass.UP:
-                        msg = clu.UpMessage()
-                    else:
-                        msg = cld.DownMessage()
+                    msg = m.Message()
                     try:
                         msg.ParseFromString(payload)
                         return msg
@@ -104,16 +102,16 @@ class SerialCom:
         self.serial.write(data)
 
     def send_speed_cmd(self, vx, vy, vtheta):
-        msg = cld.DownMessage()
-        msg.speed_command.vx = vx
-        msg.speed_command.vy = vy
-        msg.speed_command.vtheta = vtheta
+        msg = m.Message()
+        msg.speed.vx = vx
+        msg.speed.vy = vy
+        msg.speed.vtheta = vtheta
         self.send_msg(msg)
 
 
 if __name__ == "__main__":
 
-    port = sys.argv[1] if len(sys.argv) >= 2 else "/dev/bmp_tty"
+    port = sys.argv[1] if len(sys.argv) >= 2 else "/dev/ttyUSB0"
     baudrate = int(sys.argv[2]) if len(sys.argv) >= 3 else 115200
     msg_class = MsgClass.UP if len(sys.argv) < 4 else MsgClass.DOWN
     print(msg_class)

@@ -2,6 +2,10 @@
 from radio_messenger import RadioMessenger
 from utils import *
 from logger import Logger
+from generated import messages_pb2 as m
+
+STATUS = m.Message.STATUS
+COMMAND = m.Message.COMMAND
 
 
 def filter_sender(func):
@@ -35,21 +39,8 @@ class AbstractRadio:
     def stop(self):
         raise NotImplementedError("The stop method must be implemented!")
 
-    # Up messages
+    def emit_msg(self, src, msg: m.Message):
+        self.messenger.robot_msg_sig.emit(src, msg)
 
-    def emit_pos_changed(self, rid, pos: Pos):
-        self.messenger.pos_changed.emit(rid, pos)
-
-    def emit_speed_changed(self, rid, speed: Speed):
-        self.messenger.speed_changed.emit(rid, speed)
-
-    def emit_bat_changed(self, rid, bat: float):
-        self.messenger.bat_changed.emit(rid, bat)
-
-    # down messages
-
-    def send_speed_cmd(self, rid, speed):
-        raise NotImplementedError()
-
-    def send_pid_gains(self, rid, gains):
-        raise NotImplementedError()
+    def send_msg(self, dst, msg: m.Message):
+        raise NotImplementedError("you must implement send_msg method!!!")

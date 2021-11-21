@@ -3,7 +3,8 @@ from PyQt5.QtCore import *
 from serial import Serial
 from enum import Enum
 import struct
-from generated import coinlang_down_pb2 as cld, coinlang_up_pb2 as clu
+from generated import messages_pb2 as m
+
 from google import protobuf
 from robot import *
 from utils import *
@@ -69,28 +70,22 @@ class RadioSP(QThread, AbstractRadio):
                 chk = ord(self.serial.read())
                 self._rcv_state = RcvState.START1
                 if chk == self.compute_chk(payload):
-                    umsg = clu.UpMessage()
+                    msg = m.Message()
                     try:
-                        umsg.ParseFromString(payload)
-                        return umsg
+                        msg.ParseFromString(payload)
+                        return msg
                     except protobuf.message.DecodeError:
                         return None
                 else:
                     print(f"chgk failed: {chk}  {self.compute_chk(payload)}")
                     return None
 
-    def handle_umsg(self, u):
-        if u.HasField("battery_report"):
-            self.emit_bat_changed(self.rid, u.battery_report.voltage)
-        elif u.HasField("pos_report"):
-            self.emit_pos_changed(self.rid, Pos(u.pos_report.pos_x, u.pos_report.pos_y, u.pos_report.pos_theta))
-        elif u.HasField("speed_report"):
-            self.emit_speed_changed(self.rid, Speed(u.speed_report.vx, u.speed_report.vy, u.speed_report.vtheta))
-        else:
-            pass
-            #print(u)
+    def handle_umsg(self, msg):
+        self.emit_msg(self.rid, msg)
+        #if msg.HasField("bat") and msg.msg_type == m.Message.STATUS:
 
-    def msg_to_dict(self, src, msg):
+    @staticmethod
+    def msg_to_dict(src, msg):
         msg_name = msg.WhichOneof('inner')
         inner = getattr(msg, msg_name)
         d_msg = {msg_name: {}}
@@ -100,7 +95,8 @@ class RadioSP(QThread, AbstractRadio):
         d = {src: d_msg}
         return d
 
-    def send_msg(self, msg):
+    @filter_sender
+    def send_msg(self, rid, msg: m.Message):
         payload = msg.SerializeToString()
         header = struct.pack("<BBB", 0xFF, 0xFF, len(payload))
         chk = struct.pack("<B", self.compute_chk(payload))
@@ -109,24 +105,7 @@ class RadioSP(QThread, AbstractRadio):
         self.serial.flushOutput()
         d = self.msg_to_dict(self.name, msg)
         self.log_dict(self.rid, d)
-
-    @filter_sender
-    def send_speed_cmd(self, rid, speed: Speed):
-        msg = cld.DownMessage()
-        msg.speed_command.vx = speed.vx
-        msg.speed_command.vy = speed.vy
-        msg.speed_command.vtheta = speed.vtheta
-        self.send_msg(msg)
-
-    @filter_sender
-    def send_pid_gains(self, rid, gains: PidGains):
-        msg = cld.DownMessage()
-        msg.pid_gains.pid_no = gains.pid_no
-        msg.pid_gains.ng = gains.ng
-        msg.pid_gains.kp = gains.kp
-        msg.pid_gains.ki = gains.ki
-        msg.pid_gains.kd = gains.kd
-        self.send_msg(msg)
+        # print(d)
 
     def run(self):
         while not self.isInterruptionRequested():

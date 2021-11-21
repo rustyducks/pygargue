@@ -19,28 +19,11 @@
      <widget class="TableView" name="table_view" native="true"/>
     </item>
     <item>
-     <layout class="QVBoxLayout" name="verticalLayout">
-      <item>
-       <widget class="RobotStatus" name="robot_status">
-        <property name="currentIndex">
-         <number>-1</number>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <spacer name="verticalSpacer">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>20</width>
-          <height>40</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-     </layout>
+     <widget class="RobotTabs" name="robot_tabs">
+      <property name="currentIndex">
+       <number>-1</number>
+      </property>
+     </widget>
     </item>
    </layout>
   </widget>
@@ -64,9 +47,9 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>RobotStatus</class>
+   <class>RobotTabs</class>
    <extends>QTabWidget</extends>
-   <header>robot_status.h</header>
+   <header>robot_tabs.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

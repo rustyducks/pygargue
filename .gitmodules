@@ -1,0 +1,3 @@
+[submodule "anatidae/protoduck"]
+	path = anatidae/protoduck
+	url = git@github.com:rustyducks/protoduck.git

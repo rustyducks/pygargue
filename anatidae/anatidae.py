@@ -9,7 +9,9 @@ from table_view import TableView
 from robot_status import RobotStatus
 from generated.window import Ui_MainWindow
 from radio_sp import RadioSP
+from radio_udp import RadioUDP
 from logger import Logger
+from PyQt5.QtNetwork import QUdpSocket, QHostAddress
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -22,12 +24,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.table_view.set_robot_manager(self.robot_manager)
         self.table_view.setFocus()
         self.logger = Logger("/tmp/robot.log")
-        self.rsp = RadioSP("/dev/bmp_tty", 57600, self.logger, rid="Daneel", parent=self)
-        self.robot_manager.add_radio(self.rsp)
+        # self.rsp = RadioSP("/dev/ttyUSB0", 57600, self.logger, rid="Daneel", parent=self)
+        self.rudp = RadioUDP(QHostAddress.LocalHost, 3456, self.logger, rid="Daneel", parent=self)
+        self.robot_manager.add_radio(self.rudp)
 
     def closeEvent(self, e: QtGui.QCloseEvent) -> None:
         self.robot_manager.stop()
-        self.rsp.stop()
+        self.rudp.stop()
         self.logger.stop()
         super(MainWindow, self).closeEvent(e)
 

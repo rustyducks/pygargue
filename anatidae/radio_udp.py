@@ -23,6 +23,7 @@ class RadioUDP(QObject, AbstractRadio):
         self.name = name
 
     def start(self):
+        self.emit_msg(self.rid, m.Message())
         self.socket.readyRead.connect(self.read_datagrams)
 
     def stop(self):

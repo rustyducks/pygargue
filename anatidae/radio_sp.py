@@ -58,6 +58,7 @@ class RadioSP(QThread, AbstractRadio):
         # print(d)
 
     def run(self):
+        self.emit_msg(self.rid, m.Message())
         while not self.isInterruptionRequested():
             time.sleep(0.001)
             msg = self.check_msgs()

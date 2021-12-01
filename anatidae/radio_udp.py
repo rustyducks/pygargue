@@ -4,6 +4,7 @@ from robot import *
 from abstract_radio import AbstractRadio
 from logger import Logger
 from transport import Transport
+from PyQt5.QtNetwork import QUdpSocket, QHostAddress
 
 
 class RadioUDP(QObject, AbstractRadio):
@@ -11,15 +12,16 @@ class RadioUDP(QObject, AbstractRadio):
     Radio protobuf over UDP
     """
 
-    def __init__(self, addr, port, logger: Logger, rid="dafi", name="Ana", parent=None):
+    def __init__(self, udpc, logger: Logger, name="Ana", parent=None):
         super().__init__(logger=logger, parent=parent)
-        self.addr = addr
-        self.port = port
+        self.udpc = udpc
+        self.addr = QHostAddress(udpc.addr)
+        self.port = udpc.port
         self.transport = Transport()
         self.socket = QUdpSocket(self)
-        # self.socket.bind(addr, port)
-        self.rid = rid
-        self.add_rid(rid)
+        self.socket.bind(QHostAddress(udpc.local_addr), udpc.local_port)
+        self.rid = udpc.rid
+        self.add_rid(udpc.rid)
         self.name = name
 
     def start(self):
@@ -55,5 +57,6 @@ class RadioUDP(QObject, AbstractRadio):
         return d
 
     def send_msg(self, rid, msg: m.Message):
-        data = self.transport.serialize(msg)
-        self.socket.writeDatagram(data, self.addr, self.port)
+        if msg.WhichOneof("inner") in self.udpc.allowed:
+            data = self.transport.serialize(msg)
+            self.socket.writeDatagram(data, self.addr, self.port)

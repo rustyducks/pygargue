@@ -3,21 +3,18 @@ from PyQt5.QtWidgets import *
 from robot import *
 import robots_manager
 from typing import Optional, Dict
-from robot_status import RobotStatus
 from arm_hat import RAH
+
 
 class RobotTab(QWidget):
     def __init__(self, rid, robot_manager, *args, **kwargs):
         QWidget.__init__(self, *args, **kwargs)
         self.rid = rid
         lay = QHBoxLayout(self)
-        self.robot_status = RobotStatus(rid=rid, robot_manager=robot_manager, parent=self)
-        lay.addWidget(self.robot_status)
         self.rah = RAH(rid=rid, robot_manager=robot_manager, parent=self)
         lay.addWidget(self.rah)
 
     def handle_msg(self, msg: m.Message):
-        self.robot_status.handle_message(msg)
         self.rah.handle_message(msg)
 
 

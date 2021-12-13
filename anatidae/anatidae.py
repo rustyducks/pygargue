@@ -1,18 +1,14 @@
+#!/usr/bin/python3
 from PyQt5 import QtCore, QtWidgets, QtGui
 from PyQt5.QtWidgets import QMainWindow
-import time
-import math
 import sys
-from typing import List
 from robots_manager import RobotsManager
-from table_view import TableView
-from robot_status import RobotStatus
-from generated.window import Ui_MainWindow
 from radio_sp import RadioSP
 from radio_udp import RadioUDP
 from logger import Logger
-from PyQt5.QtNetwork import QUdpSocket, QHostAddress
 from utils import UDPConnexion
+from robot_tabs import RobotTabs
+from table_view import TableView
 
 cs = [
         UDPConnexion("Dalek base", "127.0.0.1", 3456, "0.0.0.0", 3333, "Dalek", ["speed", "motor_pid"]),
@@ -26,11 +22,25 @@ cs = [
 # allowed : which messages can be sent to this connexion
 
 
-class MainWindow(QMainWindow, Ui_MainWindow):
+class MainWindow(QMainWindow):
 
     def __init__(self):
         QMainWindow.__init__(self)
-        self.setupUi(self)
+        self.setWindowTitle("Anatidae")
+        self.resize(739, 481)
+        self.splitter = QtWidgets.QSplitter()
+        self.table_view = TableView(self.splitter)
+        self.robot_tabs = RobotTabs(self.splitter)
+        self.splitter.setStretchFactor(0, 1)
+        self.setCentralWidget(self.splitter)
+        self.robot_tabs.setCurrentIndex(-1)
+
+
+        # self.menubar = QtWidgets.QMenuBar(self)
+        # self.setMenuBar(self.menubar)
+        # self.statusbar = QtWidgets.QStatusBar(self)
+        # self.setStatusBar(self.statusbar)
+
         self.robot_manager = RobotsManager()
         self.robot_tabs.set_robot_manager(self.robot_manager)
         self.table_view.set_robot_manager(self.robot_manager)

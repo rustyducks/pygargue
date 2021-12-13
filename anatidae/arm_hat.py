@@ -28,6 +28,8 @@ class RAH(QWidget, Ui_ArmHat):
         self.hat_pump_checkbox.toggled.connect(self.send_hat_pos)
         self.hat_spinbox.valueChanged.connect(self.send_hat_pos)
 
+        self.pid_gains_send_button.clicked.connect(self.send_pid_gains)
+
     def handle_message(self, msg: m.Message):
         if msg.HasField("arm"):
             if msg.arm.arm_id == m.ARM1:
@@ -38,6 +40,28 @@ class RAH(QWidget, Ui_ArmHat):
             self.hat_valve_status.setChecked(msg.hat.valve)
             self.hat_pump_status.setChecked(msg.hat.pump)
             self.hat_pos_label.setText(f"{msg.hat.height}")
+        elif msg.HasField("pos") and msg.msg_type == m.Message.STATUS:
+            self.update_pos(msg)
+        elif msg.HasField("speed") and msg.msg_type == m.Message.STATUS:
+            self.update_speed(msg)
+        elif msg.HasField("bat") and msg.msg_type == m.Message.STATUS:
+            self.update_bat(msg)
+
+    def update_bat(self, msg):
+        bat = msg.bat
+        self.bat_label.setText(f"{bat.voltage:.2f}")
+
+    def update_pos(self, msg: m.Message):
+        pos = msg.pos
+        self.x_label.setText(f"{pos.x:.2f}")
+        self.y_label.setText(f"{pos.y:.2f}")
+        self.theta_label.setText(f"{pos.theta:.2f}")
+
+    def update_speed(self, msg: m.Message):
+        speed = msg.speed
+        self.vx_label.setText(f"{speed.vx:.2f}")
+        self.vy_label.setText(f"{speed.vy:.2f}")
+        self.vtheta_label.setText(f"{speed.vtheta:.2f}")
 
     def set_arm1_state(self, msg):
         self.arm1_pressureLabel.setText(f"pressure: {msg.arm.pressure}")
@@ -100,4 +124,18 @@ class RAH(QWidget, Ui_ArmHat):
     def send_pump_cmd(self, pump, state):
         print(state)
         # self.messenger.set_pump_state(PumpCmd(pump, state))
+
+    def send_pid_gains(self):
+        pid_no = int(self.pid_no_combo.currentText())
+        feedforward = self.ng_spin.value()
+        kp = self.kp_spin.value()
+        ki = self.ki_spin.value()
+        kd = self.kd_spin.value()
+        msg = m.Message()
+        msg.motor_pid.motor_no = pid_no
+        msg.motor_pid.feedforward = feedforward
+        msg.motor_pid.kp = kp
+        msg.motor_pid.ki = ki
+        msg.motor_pid.kd = kd
+        self.robot_manager.send_msg(self.rid, msg)
 

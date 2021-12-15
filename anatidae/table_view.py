@@ -5,7 +5,7 @@ from robot import *
 import robots_manager
 from typing import Optional
 from utils import *
-from math import cos, sin, pi
+from math import cos, sin, pi, atan2
 from enum import Enum
 from generated import messages_pb2 as m
 
@@ -18,8 +18,13 @@ ROBOT_SIZE = 30
 ARROW_SIZE = 15
 ARROW_ANGLE = pi + pi/8
 
+POS_ORIENT_THRESHOLD = 20
+
 
 class TableView(QWidget):
+
+    mouse_pos_changed = pyqtSignal(int, int)
+    pos_cmd_changed = pyqtSignal(int, int, object)
 
     def __init__(self, *args, **kwargs):
         QWidget.__init__(self, *args, **kwargs)
@@ -33,6 +38,10 @@ class TableView(QWidget):
         self.speed_timer = QTimer(self)
         self.speed_timer.timeout.connect(self.send_speed_command)
         self.speed_timer.start(200)
+        self.pix_rect = QRect(0, 0, 0, 0)
+        self.setMouseTracking(True)
+        self.press_pos = None
+        self.current_pos = None
 
     def set_robot_manager(self, rman):
         self.robot_manager = rman  # type: robots_manager.RobotsManager
@@ -62,8 +71,8 @@ class TableView(QWidget):
             w = rect.height() * pix_ratio
             x = (rect.width() - w) / 2
             y = 0
-        pix_rect = QRect(int(x), int(y), int(w), int(h))
-        painter.drawPixmap(pix_rect, self.pix, self.pix.rect())
+        self.pix_rect = QRect(int(x), int(y), int(w), int(h))
+        painter.drawPixmap(self.pix_rect, self.pix, self.pix.rect())
 
         for rid, r in self.robot_manager.robots.items():
             pos = r.pos.pos
@@ -79,6 +88,18 @@ class TableView(QWidget):
             a2 = head + QPoint(ARROW_SIZE * cos(-pos.theta - ARROW_ANGLE), ARROW_SIZE * sin(-pos.theta - ARROW_ANGLE))
             painter.setBrush(Qt.black)
             painter.drawPolygon(a1, head, a2)
+
+        pos_cmd = self.getPosCmd()
+        if pos_cmd is not None:
+            x, y, theta = pos_cmd
+            if theta is not None:
+                painter.drawLine(self.press_pos.x(), self.press_pos.y(), self.current_pos.x(), self.current_pos.y())
+                a1 = self.current_pos + QPoint(ARROW_SIZE * cos(-theta + ARROW_ANGLE),
+                                               ARROW_SIZE * sin(-theta + ARROW_ANGLE))
+                a2 = self.current_pos + QPoint(ARROW_SIZE * cos(-theta - ARROW_ANGLE),
+                                               ARROW_SIZE * sin(-theta - ARROW_ANGLE))
+                painter.setBrush(Qt.black)
+                painter.drawPolygon(a1, self.current_pos, a2)
 
     def keyPressEvent(self, e: QKeyEvent) -> None:
         if e.isAutoRepeat():
@@ -118,7 +139,56 @@ class TableView(QWidget):
     def send_speed_command(self):
         self.robot_manager.send_msg(self.robot_manager.current_rid, self.speed_cmd)
 
+    def send_pos_cmd(self, x, y, theta=None):
+        pos_cmd = m.Message()
+        pos_cmd.pos.x = x
+        pos_cmd.pos.y = y
+        if theta is not None:
+            pos_cmd.pos.theta = theta
+        pos_cmd.msg_type = m.Message.COMMAND
+        self.robot_manager.send_msg(self.robot_manager.current_rid, pos_cmd)
+
+    def mapToTable(self, pos: QPoint):
+        x = (pos.x() - self.pix_rect.left()) * 3000 / self.pix_rect.width()
+        y = 2000 - ((pos.y() - self.pix_rect.top()) * 2000 / self.pix_rect.height())
+        return round(x), round(y)
+
+    def getPosCmd(self):
+        if self.press_pos is not None and self.current_pos is not None:
+            x, y = self.mapToTable(self.press_pos)
+            dx = self.current_pos.x() - self.press_pos.x()
+            dy = self.press_pos.y() - self.current_pos.y()  # y axis is inverted
+            if abs(dx) > POS_ORIENT_THRESHOLD or abs(dy) > POS_ORIENT_THRESHOLD:
+                theta = atan2(dy, dx)
+            else:
+                rpos = self.robot_manager.robots[self.robot_manager.current_rid].pos
+                if rpos.HasField("pos"):
+                    theta = rpos.pos.theta
+                else:
+                    theta = 0
+            return x, y, theta
+
+    def mouseMoveEvent(self, e: QMouseEvent) -> None:
+        self.mouse_pos_changed.emit(*self.mapToTable(e.pos()))
+        self.current_pos = e.pos()
+        if self.press_pos is not None:
+            self.update()
+            x, y, theta = self.getPosCmd()
+            self.pos_cmd_changed.emit(x, y, theta)
+
     def mousePressEvent(self, e: QMouseEvent) -> None:
         self.setFocus()
-        pass
+        self.press_pos = e.pos()
+        self.current_pos = e.pos()
+        x, y, theta = self.getPosCmd()
+        self.pos_cmd_changed.emit(x, y, theta)
+
+    def mouseReleaseEvent(self, e: QMouseEvent) -> None:
+        if self.press_pos is not None:
+            x, y, theta = self.getPosCmd()
+            self.press_pos = None
+            self.send_pos_cmd(x, y, theta)
+            print(x, y, theta)
+            self.pos_cmd_changed.emit(x, y, theta)
+            self.update()
 

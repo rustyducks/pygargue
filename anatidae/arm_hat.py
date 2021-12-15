@@ -29,6 +29,7 @@ class RAH(QWidget, Ui_ArmHat):
         self.hat_spinbox.valueChanged.connect(self.send_hat_pos)
 
         self.pid_gains_send_button.clicked.connect(self.send_pid_gains)
+        self.proc_btn_stack.clicked.connect(lambda: self.send_procedure_cmd(m.ProcedureCmd.PUT_ON_STACK))
 
     def handle_message(self, msg: m.Message):
         if msg.HasField("arm"):
@@ -46,6 +47,10 @@ class RAH(QWidget, Ui_ArmHat):
             self.update_speed(msg)
         elif msg.HasField("bat") and msg.msg_type == m.Message.STATUS:
             self.update_bat(msg)
+        elif msg.HasField("slip") and msg.msg_type == m.Message.STATUS:
+            self.update_slip(msg)
+        elif msg.HasField("procedure_status"):
+            self.update_procedure(msg)
 
     def update_bat(self, msg):
         bat = msg.bat
@@ -63,13 +68,17 @@ class RAH(QWidget, Ui_ArmHat):
         self.vy_label.setText(f"{speed.vy:.2f}")
         self.vtheta_label.setText(f"{speed.vtheta:.2f}")
 
+    def update_slip(self, msg: m.Message):
+        self.slip_left.setText(f"{msg.slip.slip_left:.0f}")
+        self.slip_right.setText(f"{msg.slip.slip_right:.0f}")
+
     def set_arm1_state(self, msg):
         self.arm1_pressureLabel.setText(f"pressure: {msg.arm.pressure}")
         self.pump1_status.setChecked(msg.arm.pump)
         self.valve1_status.setChecked(msg.arm.valve)
-        self.traz1_label.setText(f"{msg.arm.traZ}")
-        self.rotz1_label.setText(f"{msg.arm.rotZ}")
-        self.roty1_label.setText(f"{msg.arm.rotY}")
+        self.traz1_label.setText(f"{msg.arm.traZ:.0f}")
+        self.rotz1_label.setText(f"{msg.arm.rotZ:.0f}")
+        self.roty1_label.setText(f"{msg.arm.rotY:.0f}")
         if not self.arm1_initialized:
             self.arm1_traz.setValue(msg.arm.traZ)
             self.arm1_roty.setValue(msg.arm.rotY)
@@ -92,6 +101,18 @@ class RAH(QWidget, Ui_ArmHat):
             self.arm2_pump.setChecked(msg.arm.pump)
             self.arm2_valve.setChecked(msg.arm.valve)
             self.arm2_initialized = True
+
+    def update_procedure(self, msg: m.Message):
+        status = msg.procedure_status.status
+        print(status)
+
+    def send_procedure_cmd(self, proc):
+        msg = m.Message()
+        msg.msg_type = m.Message.COMMAND
+        msg.procedure_cmd.arm_id = m.ARM1
+        msg.procedure_cmd.procedure = proc
+        msg.procedure_cmd.param = self.proc_param.value()
+        self.robot_manager.send_msg(self.rid, msg)
 
     def send_arm_pos(self, arm_id):
         msg = m.Message()

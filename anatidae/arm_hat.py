@@ -29,7 +29,7 @@ class RAH(QWidget, Ui_ArmHat):
         self.hat_spinbox.valueChanged.connect(self.send_hat_pos)
 
         self.pid_gains_send_button.clicked.connect(self.send_pid_gains)
-        self.proc_btn_stack.clicked.connect(lambda: self.send_procedure_cmd(m.ProcedureCmd.PUT_ON_STACK))
+        self.proc_btn_stack.clicked.connect(lambda: self.send_procedure(m.Procedure.PUT_ON_STACK))
 
     def handle_message(self, msg: m.Message):
         if msg.HasField("arm"):
@@ -49,7 +49,7 @@ class RAH(QWidget, Ui_ArmHat):
             self.update_bat(msg)
         elif msg.HasField("slip") and msg.msg_type == m.Message.STATUS:
             self.update_slip(msg)
-        elif msg.HasField("procedure_status"):
+        elif msg.HasField("procedure") and msg.msg_type == m.Message.STATUS:
             self.update_procedure(msg)
 
     def update_bat(self, msg):
@@ -103,15 +103,17 @@ class RAH(QWidget, Ui_ArmHat):
             self.arm2_initialized = True
 
     def update_procedure(self, msg: m.Message):
-        status = msg.procedure_status.status
+        status = msg.procedure.status
+        status = m.Procedure.Status.Name(status)
         print(status)
+        self.proc_status.setText(status)
 
-    def send_procedure_cmd(self, proc):
+    def send_procedure(self, proc):
         msg = m.Message()
         msg.msg_type = m.Message.COMMAND
-        msg.procedure_cmd.arm_id = m.ARM1
-        msg.procedure_cmd.procedure = proc
-        msg.procedure_cmd.param = self.proc_param.value()
+        msg.procedure.arm_id = m.ARM1
+        msg.procedure.proc = proc
+        msg.procedure.param = self.proc_param.value()
         self.robot_manager.send_msg(self.rid, msg)
 
     def send_arm_pos(self, arm_id):

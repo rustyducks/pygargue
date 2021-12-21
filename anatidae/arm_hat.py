@@ -30,6 +30,7 @@ class RAH(QWidget, Ui_ArmHat):
 
         self.pid_gains_send_button.clicked.connect(self.send_pid_gains)
         self.proc_btn_stack.clicked.connect(lambda: self.send_procedure(m.Procedure.PUT_ON_STACK))
+        self.proc_btn_turnstack.clicked.connect(lambda: self.send_procedure(m.Procedure.TURN_AND_PUT_ON_STACK))
 
     def handle_message(self, msg: m.Message):
         if msg.HasField("arm"):

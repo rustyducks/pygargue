@@ -14,6 +14,9 @@ class RAH(QWidget, Ui_ArmHat):
         self.rid = rid
         self.robot_manager = robot_manager
 
+        self.proc_arm_combobox.addItem("Arm 1")
+        self.proc_arm_combobox.addItem("Arm 2")
+
         self.arm1_initialized = False
         self.arm2_initialized = False
         self.hat_initialized = False
@@ -24,6 +27,12 @@ class RAH(QWidget, Ui_ArmHat):
         self.arm1_pump.toggled.connect(lambda: self.send_arm_pos(1))
         self.arm1_valve.toggled.connect(lambda: self.send_arm_pos(1))
 
+        self.arm2_traz.valueChanged.connect(lambda: self.send_arm_pos(2))
+        self.arm2_rotz.valueChanged.connect(lambda: self.send_arm_pos(2))
+        self.arm2_roty.valueChanged.connect(lambda: self.send_arm_pos(2))
+        self.arm2_pump.toggled.connect(lambda: self.send_arm_pos(2))
+        self.arm2_valve.toggled.connect(lambda: self.send_arm_pos(2))
+
         self.hat_valve.toggled.connect(self.send_hat_pos)
         self.hat_pump_checkbox.toggled.connect(self.send_hat_pos)
         self.hat_spinbox.valueChanged.connect(self.send_hat_pos)
@@ -31,6 +40,7 @@ class RAH(QWidget, Ui_ArmHat):
         self.pid_gains_send_button.clicked.connect(self.send_pid_gains)
         self.proc_btn_stack.clicked.connect(lambda: self.send_procedure(m.Procedure.PUT_ON_STACK))
         self.proc_btn_turnstack.clicked.connect(lambda: self.send_procedure(m.Procedure.TURN_AND_PUT_ON_STACK))
+        self.proc_btn_home.clicked.connect(lambda: self.send_procedure(m.Procedure.HOME))
 
     def handle_message(self, msg: m.Message):
         if msg.HasField("arm"):
@@ -42,6 +52,7 @@ class RAH(QWidget, Ui_ArmHat):
             self.hat_valve_status.setChecked(msg.hat.valve)
             self.hat_pump_status.setChecked(msg.hat.pump)
             self.hat_pos_label.setText(f"{msg.hat.height}")
+            self.hat_pressureLabel.setText(f"pressure: {msg.hat.pressure}")
         elif msg.HasField("pos") and msg.msg_type == m.Message.STATUS:
             self.update_pos(msg)
         elif msg.HasField("speed") and msg.msg_type == m.Message.STATUS:
@@ -112,7 +123,10 @@ class RAH(QWidget, Ui_ArmHat):
     def send_procedure(self, proc):
         msg = m.Message()
         msg.msg_type = m.Message.COMMAND
-        msg.procedure.arm_id = m.ARM1
+        if self.proc_arm_combobox.currentIndex() == 0:
+            msg.procedure.arm_id = m.ARM1
+        else:
+            msg.procedure.arm_id = m.ARM2
         msg.procedure.proc = proc
         msg.procedure.param = self.proc_param.value()
         self.robot_manager.send_msg(self.rid, msg)

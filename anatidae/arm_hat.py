@@ -41,6 +41,10 @@ class RAH(QWidget, Ui_ArmHat):
         self.proc_btn_stack.clicked.connect(lambda: self.send_procedure(m.Procedure.PUT_ON_STACK))
         self.proc_btn_turnstack.clicked.connect(lambda: self.send_procedure(m.Procedure.TURN_AND_PUT_ON_STACK))
         self.proc_btn_home.clicked.connect(lambda: self.send_procedure(m.Procedure.HOME))
+        self.proc_btn_unstack.clicked.connect(lambda: self.send_procedure(m.Procedure.TAKE_FROM_STACK))
+
+        self.display_spinBox.valueChanged.connect(self.send_hmi)
+        self.led_slider.valueChanged.connect(self.send_hmi)
 
     def handle_message(self, msg: m.Message):
         if msg.HasField("arm"):
@@ -52,7 +56,7 @@ class RAH(QWidget, Ui_ArmHat):
             self.hat_valve_status.setChecked(msg.hat.valve)
             self.hat_pump_status.setChecked(msg.hat.pump)
             self.hat_pos_label.setText(f"{msg.hat.height}")
-            self.hat_pressureLabel.setText(f"pressure: {msg.hat.pressure}")
+            self.hat_pressureLabel.setText(f"pressure: {msg.hat.pressure:0.2f}")
         elif msg.HasField("pos") and msg.msg_type == m.Message.STATUS:
             self.update_pos(msg)
         elif msg.HasField("speed") and msg.msg_type == m.Message.STATUS:
@@ -63,6 +67,8 @@ class RAH(QWidget, Ui_ArmHat):
             self.update_slip(msg)
         elif msg.HasField("procedure") and msg.msg_type == m.Message.STATUS:
             self.update_procedure(msg)
+        elif msg.HasField("hmi") and msg.msg_type == m.Message.STATUS:
+            self.update_hmi(msg)
 
     def update_bat(self, msg):
         bat = msg.bat
@@ -85,7 +91,7 @@ class RAH(QWidget, Ui_ArmHat):
         self.slip_right.setText(f"{msg.slip.slip_right:.0f}")
 
     def set_arm1_state(self, msg):
-        self.arm1_pressureLabel.setText(f"pressure: {msg.arm.pressure}")
+        self.arm1_pressureLabel.setText(f"pressure: {msg.arm.pressure:0.2f}")
         self.pump1_status.setChecked(msg.arm.pump)
         self.valve1_status.setChecked(msg.arm.valve)
         self.traz1_label.setText(f"{msg.arm.traZ:.0f}")
@@ -100,7 +106,7 @@ class RAH(QWidget, Ui_ArmHat):
             self.arm1_initialized = True
 
     def set_arm2_state(self, msg):
-        self.arm2_pressureLabel.setText(f"pressure: {msg.arm.pressure}")
+        self.arm2_pressureLabel.setText(f"pressure: {msg.arm.pressure:0.2f}")
         self.pump2_status.setChecked(msg.arm.pump)
         self.valve2_status.setChecked(msg.arm.valve)
         self.traz2_label.setText(f"{msg.arm.traZ}")
@@ -117,8 +123,13 @@ class RAH(QWidget, Ui_ArmHat):
     def update_procedure(self, msg: m.Message):
         status = msg.procedure.status
         status = m.Procedure.Status.Name(status)
-        print(status)
         self.proc_status.setText(status)
+
+    def update_hmi(self, msg: m.Message):
+        self.tirette_checkbox.setChecked(msg.hmi.tirette)
+        self.button_checkbox.setChecked(msg.hmi.bouton)
+        self.color_checkbox.setChecked(msg.hmi.color)
+        # self.display_spinBox.setValue(msg.hmi.hmi_display)
 
     def send_procedure(self, proc):
         msg = m.Message()
@@ -176,4 +187,12 @@ class RAH(QWidget, Ui_ArmHat):
         msg.motor_pid.ki = ki
         msg.motor_pid.kd = kd
         self.robot_manager.send_msg(self.rid, msg)
+
+    def send_hmi(self):
+        msg = m.Message()
+        msg.msg_type = m.Message.COMMAND
+        msg.hmi.led = self.led_slider.value()
+        msg.hmi.hmi_display = self.display_spinBox.value()
+        self.robot_manager.send_msg(self.rid, msg)
+        print(msg)
 

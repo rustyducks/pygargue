@@ -11,17 +11,8 @@ from logger import Logger
 from utils import UDPConnexion
 from robot_tabs import RobotTabs
 from table_view import TableView
-
-cs = [
-#        UDPConnexion("Dalek base", "127.0.0.1", 3456, "0.0.0.0", 3333, "Dalek", ["speed", "motor_pid"]),
-#        UDPConnexion("Dalek IO", "127.0.0.1", 3457, "0.0.0.0", 3334, "Dalek", ["arm", "hat", "procedure_cmd"]),
-        #         connexion name,   dst,     dst port, src,  local port, associated rid, allowed
-    ]
-# dst is where the bridge is running (where the serial port is)
-# dst port is the UDP port on wich the bridge is listening
-# local_port is the port this radio will receive data
-# associated rid : the rid associated with this connexion
-# allowed : which messages can be sent to this connexion
+import json
+from serial.serialutil import SerialException
 
 
 class MainWindow(QMainWindow):
@@ -55,16 +46,10 @@ class MainWindow(QMainWindow):
         self.table_view.set_robot_manager(self.robot_manager)
         self.table_view.setFocus()
         self.logger = Logger("/tmp/robot.log")
-        self.rsp= RadioSP("/dev/ttyUSB0", 57600, self.logger, rid="Daneel", parent=self)
         self.table_view.mouse_pos_changed.connect(self.update_mouse_pos)
         self.table_view.pos_cmd_changed.connect(self.update_pos_cmd)
+        self.radios_from_file("radios.json")
         
-        self.robot_manager.add_radio(self.rsp)
-        self.rudps = []
-        for c in cs:
-            r = RadioUDP(c, self.logger, parent=self)
-            self.robot_manager.add_radio(r)
-            self.rudps.append(r)
 
     def update_mouse_pos(self, x, y):
         self.pos_label.setText(f"X:{x:4} Y:{y:4}")
@@ -77,10 +62,25 @@ class MainWindow(QMainWindow):
 
     def closeEvent(self, e: QtGui.QCloseEvent) -> None:
         self.robot_manager.stop()
-        for r in self.rudps:
-            r.stop()
         self.logger.stop()
         super(MainWindow, self).closeEvent(e)
+
+    def radios_from_file(self, filename):
+            with open(filename, 'r') as fic:
+                rjs = json.load(fic)
+                for rj in rjs:
+                    if rj["type"] == "UDP":
+                        c = UDPConnexion(rj["name"], rj["addr"], rj["port"], rj["local_addr"], rj["local_port"], rj["rid"], rj["allowed"])
+                        r = RadioUDP(c, self.logger, parent=self)
+                        self.robot_manager.add_radio(r)
+                    elif rj["type"] == "serial":
+                        try:
+                            r = RadioSP(rj["port"], rj["baudrate"], self.logger, rj["rid"], parent=self)
+                            self.robot_manager.add_radio(r)
+                        except SerialException as e:
+                            print(e)
+                    else:
+                        print("Radio type {} unknown!".format(rj["type"]))
 
 
 if __name__ == "__main__":

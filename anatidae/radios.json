@@ -2,7 +2,7 @@
   {
     "type":"UDP",
     "name":"Dalek base",
-    "addr":"127.0.0.1",
+    "addr":"192.168.42.174",
     "port":3456,
     "local_addr":"0.0.0.0",
     "local_port":3333,
@@ -12,17 +12,23 @@
   {
     "type":"UDP",
     "name":"Dalek IO",
-    "addr":"127.0.0.1",
+    "addr":"192.168.42.174",
     "port":3457,
     "local_addr":"0.0.0.0",
     "local_port":3334,
     "rid":"Dalek",
-    "allowed":["arm", "hat", "procedure_cmd"]
+    "allowed":["arm", "hat", "procedure", "hmi"]
+  },
+  {
+    "type": "serial",
+    "port": "/dev/bmp_tty",
+    "baudrate": 115200,
+    "rid": "Holo"
   },
   {
     "type": "serial",
     "port": "/dev/ttyUSB0",
-    "baudrate": 57600,
-    "rid": "Holo"
+    "baudrate": 115200,
+    "rid": "Dalek"
   }
 ]

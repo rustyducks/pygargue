@@ -112,9 +112,9 @@ class TableView(QWidget):
         elif e.key() == Qt.Key_S:
             self.speed_cmd.speed.vx = -CMD_SPEED * mult
         elif e.key() == Qt.Key_Q:
-            self.speed_cmd.speed.vy = -CMD_SPEED * mult
-        elif e.key() == Qt.Key_D:
             self.speed_cmd.speed.vy = CMD_SPEED * mult
+        elif e.key() == Qt.Key_D:
+            self.speed_cmd.speed.vy = -CMD_SPEED * mult
         elif e.key() == Qt.Key_A:
             self.speed_cmd.speed.vtheta = CMD_OMEGA * mult
         elif e.key() == Qt.Key_E:

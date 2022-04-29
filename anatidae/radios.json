@@ -7,7 +7,7 @@
     "local_addr":"0.0.0.0",
     "local_port":3333,
     "rid":"Dalek",
-    "allowed":["speed", "motor_pid"]
+    "allowed":["speed", "motor_pid", "pos"]
   },
   {
     "type":"UDP",

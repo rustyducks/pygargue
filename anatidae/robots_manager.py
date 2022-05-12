@@ -43,4 +43,5 @@ class RobotsManager(QObject):
 
     def send_msg(self, dst, msg: m.Message):
         for radio in self.radios:
-            radio.send_msg(dst, msg)
+            if dst in radio.rids:
+                radio.send_msg(dst, msg)

@@ -23,9 +23,9 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>-297</y>
+        <y>0</y>
         <width>276</width>
-        <height>1528</height>
+        <height>1590</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -62,19 +62,12 @@
              <number>-130</number>
             </property>
             <property name="maximum">
-             <number>0</number>
+             <number>512</number>
             </property>
            </widget>
           </item>
           <item>
            <layout class="QGridLayout" name="gridLayout_11">
-            <item row="0" column="0">
-             <widget class="QPushButton" name="proc_btn_home">
-              <property name="text">
-               <string>HOME</string>
-              </property>
-             </widget>
-            </item>
             <item row="1" column="0">
              <widget class="QPushButton" name="proc_btn_stack">
               <property name="text">
@@ -89,10 +82,38 @@
               </property>
              </widget>
             </item>
+            <item row="0" column="0">
+             <widget class="QPushButton" name="proc_btn_home">
+              <property name="text">
+               <string>HOME</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QPushButton" name="proc_langue">
+              <property name="text">
+               <string>LANGUE</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="QPushButton" name="proc_trompe">
+              <property name="text">
+               <string>TROMPE</string>
+              </property>
+             </widget>
+            </item>
             <item row="1" column="1">
              <widget class="QPushButton" name="proc_btn_unstack">
               <property name="text">
                <string>Unstack</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="0">
+             <widget class="QPushButton" name="proc_dropper">
+              <property name="text">
+               <string>DROPPER</string>
               </property>
              </widget>
             </item>

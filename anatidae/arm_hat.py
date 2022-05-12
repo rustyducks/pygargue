@@ -42,6 +42,9 @@ class RAH(QWidget, Ui_ArmHat):
         self.proc_btn_turnstack.clicked.connect(lambda: self.send_procedure(m.Procedure.TURN_AND_PUT_ON_STACK))
         self.proc_btn_home.clicked.connect(lambda: self.send_procedure(m.Procedure.HOME))
         self.proc_btn_unstack.clicked.connect(lambda: self.send_procedure(m.Procedure.TAKE_FROM_STACK))
+        self.proc_trompe.clicked.connect(lambda: self.send_procedure(m.Procedure.TROMPE))
+        self.proc_langue.clicked.connect(lambda: self.send_procedure(m.Procedure.LANGUE))
+        self.proc_dropper.clicked.connect(lambda: self.send_procedure(m.Procedure.DROPPER))
 
         self.display_spinBox.valueChanged.connect(self.send_hmi)
         self.led_slider.valueChanged.connect(self.send_hmi)
@@ -69,6 +72,8 @@ class RAH(QWidget, Ui_ArmHat):
             self.update_procedure(msg)
         elif msg.HasField("hmi") and msg.msg_type == m.Message.STATUS:
             self.update_hmi(msg)
+        elif msg.HasField("resistance") and msg.msg_type == m.Message.STATUS:
+            print(msg)
 
     def update_bat(self, msg):
         bat = msg.bat

@@ -2,7 +2,7 @@
   {
     "type":"UDP",
     "name":"Dalek base",
-    "addr":"192.168.42.174",
+    "addr":"192.168.43.182",
     "port":3456,
     "local_addr":"0.0.0.0",
     "local_port":3333,
@@ -12,11 +12,31 @@
   {
     "type":"UDP",
     "name":"Dalek IO",
-    "addr":"192.168.42.174",
+    "addr":"192.168.43.182",
     "port":3457,
     "local_addr":"0.0.0.0",
     "local_port":3334,
     "rid":"Dalek",
+    "allowed":["arm", "hat", "procedure", "hmi"]
+  },
+  {
+    "type":"UDP",
+    "name":"Holo base",
+    "addr":"192.168.43.165",
+    "port":3456,
+    "local_addr":"0.0.0.0",
+    "local_port":3333,
+    "rid":"Holo",
+    "allowed":["speed", "motor_pid", "pos"]
+  },
+  {
+    "type":"UDP",
+    "name":"Holo IO",
+    "addr":"192.168.43.165",
+    "port":3457,
+    "local_addr":"0.0.0.0",
+    "local_port":3334,
+    "rid":"Holo",
     "allowed":["arm", "hat", "procedure", "hmi"]
   },
   {

@@ -45,6 +45,7 @@ class RAH(QWidget, Ui_ArmHat):
         self.proc_trompe.clicked.connect(lambda: self.send_procedure(m.Procedure.TROMPE))
         self.proc_langue.clicked.connect(lambda: self.send_procedure(m.Procedure.LANGUE))
         self.proc_dropper.clicked.connect(lambda: self.send_procedure(m.Procedure.DROPPER))
+        self.proc_half_unstack.clicked.connect(lambda: self.send_procedure(m.Procedure.HALF_UNSTACK))
 
         self.display_spinBox.valueChanged.connect(self.send_hmi)
         self.led_slider.valueChanged.connect(self.send_hmi)

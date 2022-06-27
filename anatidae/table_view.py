@@ -36,7 +36,7 @@ class TableView(QWidget):
         self.speed_cmd.speed.vtheta = 0
         self.speed_cmd.msg_type = m.Message.COMMAND
         self.speed_timer = QTimer(self)
-        self.speed_timer.timeout.connect(self.send_speed_command)
+        #self.speed_timer.timeout.connect(self.send_speed_command)
         self.speed_timer.start(200)
         self.pix_rect = QRect(0, 0, 0, 0)
         self.setMouseTracking(True)

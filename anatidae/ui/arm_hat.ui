@@ -25,7 +25,7 @@
         <x>0</x>
         <y>0</y>
         <width>276</width>
-        <height>1590</height>
+        <height>1621</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -68,10 +68,10 @@
           </item>
           <item>
            <layout class="QGridLayout" name="gridLayout_11">
-            <item row="1" column="0">
-             <widget class="QPushButton" name="proc_btn_stack">
+            <item row="3" column="0">
+             <widget class="QPushButton" name="proc_langue">
               <property name="text">
-               <string>Stack</string>
+               <string>LANGUE</string>
               </property>
              </widget>
             </item>
@@ -82,24 +82,31 @@
               </property>
              </widget>
             </item>
+            <item row="4" column="0">
+             <widget class="QPushButton" name="proc_dropper">
+              <property name="text">
+               <string>DROPPER</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="1">
+             <widget class="QPushButton" name="proc_trompe">
+              <property name="text">
+               <string>TROMPE</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QPushButton" name="proc_btn_stack">
+              <property name="text">
+               <string>Stack</string>
+              </property>
+             </widget>
+            </item>
             <item row="0" column="0">
              <widget class="QPushButton" name="proc_btn_home">
               <property name="text">
                <string>HOME</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="0">
-             <widget class="QPushButton" name="proc_langue">
-              <property name="text">
-               <string>LANGUE</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="1">
-             <widget class="QPushButton" name="proc_trompe">
-              <property name="text">
-               <string>TROMPE</string>
               </property>
              </widget>
             </item>
@@ -110,10 +117,10 @@
               </property>
              </widget>
             </item>
-            <item row="3" column="0">
-             <widget class="QPushButton" name="proc_dropper">
+            <item row="2" column="0">
+             <widget class="QPushButton" name="proc_half_unstack">
               <property name="text">
-               <string>DROPPER</string>
+               <string>HalfUnstack</string>
               </property>
              </widget>
             </item>
@@ -308,7 +315,7 @@
             <item row="2" column="1">
              <widget class="QDoubleSpinBox" name="arm1_traz">
               <property name="minimum">
-               <double>-135.000000000000000</double>
+               <double>-140.000000000000000</double>
               </property>
               <property name="maximum">
                <double>0.000000000000000</double>
@@ -437,7 +444,7 @@
             <item row="2" column="1">
              <widget class="QDoubleSpinBox" name="arm2_traz">
               <property name="minimum">
-               <double>-135.000000000000000</double>
+               <double>-140.000000000000000</double>
               </property>
               <property name="maximum">
                <double>0.000000000000000</double>
